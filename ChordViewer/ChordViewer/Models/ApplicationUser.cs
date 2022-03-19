@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChordViewer.Models
 {
-    public class ApplicationUser : IdentityUser
+    [Index(nameof(UserName), IsUnique = true)]
+    public class ApplicationUser: IdentityUser 
     {
+        public bool IsAdmin { get; set; }
+
     }
 }
