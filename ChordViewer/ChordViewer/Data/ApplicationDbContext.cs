@@ -6,12 +6,19 @@ using Microsoft.Extensions.Options;
 
 namespace ChordViewer.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions)
-            : base(options, operationalStoreOptions)
+        public ApplicationDbContext(DbContextOptions options)
+            : base(options)
         {
 
         }
+
+        public DbSet<Tab>? Tabs { get; set; }
+        public DbSet<TabString>? TabStrings { get; set; }
+        public DbSet<TabBarre>? TabBarre { get; set; }
+        public DbSet<Collection>? Collections { get; set; }
+        public DbSet<CollectionTabRelation>? CollectionTabRelations { get; set; }
+        public DbSet<CollectionUserRelation>? CollectionUserRelations { get; set; }
     }
 }
