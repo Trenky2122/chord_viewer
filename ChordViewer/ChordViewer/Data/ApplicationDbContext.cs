@@ -20,5 +20,6 @@ namespace ChordViewer.Data
         public DbSet<Collection>? Collections { get; set; }
         public DbSet<CollectionTabRelation>? CollectionTabRelations { get; set; }
         public DbSet<CollectionUserRelation>? CollectionUserRelations { get; set; }
+        public DbSet<User>? Users { get; set; }
     }
 }

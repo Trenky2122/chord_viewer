@@ -181,7 +181,7 @@ export class AuthorizeService {
 
         let response = await fetch(ApplicationPaths.ApiAuthorizationClientConfigurationUrl);
         if (!response.ok) {
-            throw new Error(`Could not load settings for '${ApplicationName}'`);
+            //throw new Error(`Could not load settings for '${ApplicationName}'`);
         }
 
         let settings = await response.json();
