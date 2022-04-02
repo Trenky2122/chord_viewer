@@ -1,3 +1,3 @@
 export interface IMusicNotationViewer{
-    View(toneKey: string);
+    View(toneKey: string): boolean;
 }

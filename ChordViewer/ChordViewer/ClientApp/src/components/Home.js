@@ -1,3 +1,5 @@
+import MusicNotationViewersContainer from "./MusicNotationViewers/MusicNotationViewersContainer";
+
 const HomeComponent = () => {
     return(
         <div className={"container-fluid"}>
@@ -5,6 +7,7 @@ const HomeComponent = () => {
                 <div className={"col"}>
                     ChordViewer HomePage
                 </div>
+                <MusicNotationViewersContainer />
             </div>
         </div>
     )
