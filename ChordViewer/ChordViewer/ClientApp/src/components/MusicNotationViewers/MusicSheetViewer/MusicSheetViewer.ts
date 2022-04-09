@@ -1,5 +1,6 @@
 import {IMusicNotationViewer} from "../IMusicNotationViewer";
 import {Accidental, Vex, Voice} from "vexflow";
+import {Utils} from "../../../utils/Utils";
 
 
 export class MusicSheetViewer implements IMusicNotationViewer{
@@ -69,25 +70,15 @@ export class MusicSheetViewer implements IMusicNotationViewer{
         /**
          * Draw notes
          */
-        let tones = [];
-        for(let i=0; i<toneKey.length; i++){
-            let begin = i;
-            let end = i+1;
-            while(end<toneKey.length && (toneKey[end] == "#"||toneKey[end] == "b")){
-                end++;
-                i++;
-            }
-            tones.push(toneKey.substring(begin, end));
-        }
+        let tones = Utils.GetNotesFromToneKey(toneKey);
         let notes = [
-            new VF.StaveNote({clef: "treble", keys: tones.map(tone => tone.toLowerCase() + "/4"), duration: "q" }),
-
+            new VF.StaveNote({clef: "treble", keys: tones.map(tone => tone.toLowerCase() + ("ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?"/4":"/5")), duration: "q" }),
         ];
 
-        var voice = new VF.Voice({num_beats: 1,  beat_value: 4}).setMode(Voice.Mode.SOFT);
+        var voice = new VF.Voice({ num_beats: 1,  beat_value: 4}).setMode(Voice.Mode.SOFT);
         voice.addTickables(notes);
         Accidental.applyAccidentals([voice], "C");
-        var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+        new VF.Formatter().joinVoices([voice]).format([voice], 400);
 
         voice.draw(context, stave);
         return true;
