@@ -10,62 +10,16 @@ using System.Security.Claims;
 namespace ChordViewer.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController: Controller
+    public class UserController: BaseModelController<User>
     {
-        private ApplicationDbContext _dbContext;
-        public UserController(ApplicationDbContext dbContext)
+        public UserController(ApplicationDbContext dbContext): base(dbContext)
         {
-            _dbContext = dbContext;
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var result = await _dbContext.Users.FindAsync(id);
-            if(result == null)
-                return NotFound();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
-        {
-            if(user.Id != 0)
-                return BadRequest();
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-            return Ok(user);
-        }
-
-        [HttpPut]
-        public async Task<ActionResult<User>> UpdateUser(User user)
-        {
-            var userDb = await _dbContext.Users.FindAsync(user.Id);
-            if (userDb == null)
-                return NotFound();
-            userDb.Salt = user.Salt;
-            userDb.UserName = user.UserName;
-            userDb.IsAdmin = user.IsAdmin;
-            userDb.PasswordHash = user.PasswordHash;
-            await _dbContext.SaveChangesAsync();
-            return Ok(userDb);
-        }
-
-        [HttpDelete]
-        public async Task<ActionResult<User>> DeleteUser(int id)
-        {
-            var userDb = await _dbContext.Users.FindAsync(id);
-            if (userDb == null)
-                return NotFound();
-            _dbContext.Remove(userDb);
-            await _dbContext.SaveChangesAsync();
-            return Ok(userDb);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<User>> LogIn(string username, string password)
         {
-            var user = _dbContext.Users.SingleOrDefault(x => x.UserName == username);
+            var user = DbContext.Users.SingleOrDefault(x => x.UserName == username);
 
             // verify password
             if (user == null || !BCrypt.Net.BCrypt.Verify(password + user.Salt, user.PasswordHash))
@@ -106,7 +60,7 @@ namespace ChordViewer.Controllers
         [HttpDelete("logout")]
         public async Task<ActionResult<User>> LogOut()
         {
-            var user = await _dbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await DbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier));
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok(user);
         }
@@ -116,7 +70,7 @@ namespace ChordViewer.Controllers
         {
             try
             {
-                var user = await _dbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await DbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier));
                 return Ok(user);
             }
             catch (Exception ex)
