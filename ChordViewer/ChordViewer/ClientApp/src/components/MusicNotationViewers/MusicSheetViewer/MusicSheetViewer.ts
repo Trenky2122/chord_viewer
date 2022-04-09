@@ -7,6 +7,8 @@ export class MusicSheetViewer implements IMusicNotationViewer{
     constructor(private canvasElementId: string) {
     }
 
+    RepresentativeElement?: HTMLElement;
+
     notePositions:{[name: string]: number}  = {
         "Cb": 9,
         "C": 9,
@@ -31,11 +33,19 @@ export class MusicSheetViewer implements IMusicNotationViewer{
         "B#": 8,
     }
 
-    public View(toneKey: string): boolean {
-        let VF = Vex.Flow;
+    getActualToneKey(){
+        return "";
+    }
+    private actualToneKey = "";
 
-// We created an object to store the information about the workspace
-        var WorkspaceInformation = {
+    public View(toneKey: string): boolean {
+        if(toneKey === this.actualToneKey)
+            return true;
+        this.actualToneKey = toneKey;
+        let VF = Vex.Flow;
+        this.RepresentativeElement=document.getElementById(this.canvasElementId) as HTMLCanvasElement;
+
+        let WorkspaceInformation = {
             // The <canvas> element in which you're going to work
             canvas: document.getElementById(this.canvasElementId) as HTMLCanvasElement,
             // Vex creates a canvas with specific dimensions
@@ -43,39 +53,27 @@ export class MusicSheetViewer implements IMusicNotationViewer{
             canvasHeight: 100
         };
 
-// Create a renderer with Canvas
-        var renderer = new VF.Renderer(
+        let renderer = new VF.Renderer(
             WorkspaceInformation.canvas,
             VF.Renderer.Backends.CANVAS
         );
 
-// Expose the context of the renderer
-        var context = renderer.getContext();
+        let context = renderer.getContext();
+        context.clearRect(0, 0, this.RepresentativeElement.offsetWidth, this.RepresentativeElement.offsetHeight)
 
-// And give some style to our SVG
         context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
 
 
-        /**
-         * Creating a new stave
-         */
-// Create a stave of width 400 at position x10, y40 on the SVG.
-        var stave = new VF.Stave(10, 40, 400);
-// Add a clef and time signature.
+        let stave = new VF.Stave(10, 40, 400);
         stave.addClef("treble").addTimeSignature("4/4");
-// Set the context of the stave our previous exposed context and execute the method draw !
         stave.setContext(context).draw();
 
-
-        /**
-         * Draw notes
-         */
         let tones = Utils.GetNotesFromToneKey(toneKey);
         let notes = [
             new VF.StaveNote({clef: "treble", keys: tones.map(tone => tone.toLowerCase() + ("ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?"/4":"/5")), duration: "q" }),
         ];
 
-        var voice = new VF.Voice({ num_beats: 1,  beat_value: 4}).setMode(Voice.Mode.SOFT);
+        let voice = new VF.Voice({ num_beats: 1,  beat_value: 4}).setMode(Voice.Mode.SOFT);
         voice.addTickables(notes);
         Accidental.applyAccidentals([voice], "C");
         new VF.Formatter().joinVoices([voice]).format([voice], 400);
