@@ -1,5 +1,6 @@
 ﻿using ChordViewer.Data;
 using ChordViewer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ namespace ChordViewer.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Collection>> CreateCollection(Collection collection)
         {
@@ -33,6 +35,7 @@ namespace ChordViewer.Controllers
             return Ok(collection);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult<Collection>> UpdateCollection(Collection collection)
         {
@@ -46,6 +49,7 @@ namespace ChordViewer.Controllers
             return Ok(collectionDb);
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<ActionResult<Collection>> DeleteCollection(int id)
         {
