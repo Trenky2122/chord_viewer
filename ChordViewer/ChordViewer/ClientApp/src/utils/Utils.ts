@@ -10,6 +10,10 @@ export class Utils{
             }
             tones.push(toneKey.substring(begin, end));
         }
+        for (let i=0; i<tones.length; i++){
+            if(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(tones[i])===-1)
+                return [];
+        }
         return tones;
     }
 }

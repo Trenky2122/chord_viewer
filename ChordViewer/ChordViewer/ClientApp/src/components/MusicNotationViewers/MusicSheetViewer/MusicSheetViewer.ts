@@ -7,7 +7,7 @@ export class MusicSheetViewer implements IMusicNotationViewer{
     constructor(private canvasElementId: string) {
     }
 
-    RepresentativeElement?: HTMLElement;
+    RepresentativeElement?: HTMLCanvasElement;
 
     notePositions:{[name: string]: number}  = {
         "Cb": 9,
@@ -69,6 +69,10 @@ export class MusicSheetViewer implements IMusicNotationViewer{
         stave.setContext(context).draw();
 
         let tones = Utils.GetNotesFromToneKey(toneKey);
+        if(tones.length === 0){
+            stave.setContext(context).draw();
+            return true;
+        }
         let notes = [
             new VF.StaveNote({clef: "treble", keys: tones.map(tone => tone.toLowerCase() + ("ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?"/4":"/5")), duration: "q" }),
         ];

@@ -178,12 +178,11 @@ export class ChordNameViewer implements IMusicNotationViewer{
             let note = this.valueToNote[noteValue];
             tones.push(note);
         }
-        console.log(tones);
         return tones.filter((t, i) => tones.indexOf(t)===i).sort().join("");
     }
 
     View(toneKey: string): boolean{
-        if(this.currentToneKey === toneKey)
+        if(this.currentToneKey === toneKey || toneKey === "")
             return true;
         this.RepresentativeElement = document.getElementById(this.inputId) as HTMLInputElement;
         if(!this.RepresentativeElement)
@@ -239,8 +238,8 @@ export class ChordNameViewer implements IMusicNotationViewer{
     private static getChordBase(toneValues: number[]): [number, number]{
         for(let i=0; i<toneValues.length; i++){
             if(toneValues.indexOf(ChordNameViewer.getNoteInIntervalFromBase(toneValues[i], 7))!==-1){
-                if(toneValues.indexOf(ChordNameViewer.getNoteInIntervalFromBase(toneValues[i], 3)) !== -1 ||
-                    toneValues.indexOf(ChordNameViewer.getNoteInIntervalFromBase(toneValues[i], 4)) !== -1)
+                if(toneValues.indexOf(ChordNameViewer.getNoteInIntervalFromBase(toneValues[i], 3)) === -1 &&
+                    toneValues.indexOf(ChordNameViewer.getNoteInIntervalFromBase(toneValues[i], 4)) === -1)
                     continue;
                 return [i, 7];
             }
