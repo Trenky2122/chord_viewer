@@ -7,19 +7,21 @@ export class KeyboardViewer implements IMusicNotationViewer{
     constructor(private canvasId: string) {
     }
 
+    private currentNotes: string[] = [];
+
     View(toneKey: string): boolean {
         this.RepresentativeElement = document.getElementById(this.canvasId) as HTMLCanvasElement;
         if(!this.RepresentativeElement)
             return false;
-        let tones = Utils.GetNotesFromToneKey(toneKey);
+        this.currentNotes = Utils.GetNotesFromToneKey(toneKey);
         let ctx = this.RepresentativeElement.getContext("2d");
         let width = this.RepresentativeElement.offsetWidth;
         let height = this.RepresentativeElement.offsetHeight;
         ctx!.strokeStyle = "#000000";
         ctx!.fillStyle = "#000000";
         ctx!.clearRect(0, 0, width, height)
-        for(let i=5; i<=11; i++) {
-            if (i !== 15 && tones.indexOf(this.positionToNote[i]) !== -1) {
+        for(let i=0; i<=14; i++) {
+            if (this.currentNotes.indexOf(this.positionToNote[i]) !== -1) {
                 ctx!.fillStyle = "#00ff48";
                 ctx!.fillRect(i * width / 15, 0, width / 15, height);
                 ctx!.fillStyle = "#000000";
@@ -31,7 +33,7 @@ export class KeyboardViewer implements IMusicNotationViewer{
             ctx!.lineTo(i*width/15, height)
             ctx!.stroke();
             if(i!==2 && i!==6 && i!==9 && i!==13 && i!==14 && i!==15){
-                if(i>=5 && i<=11 && tones.indexOf(this.positionToNote[i]+"#") !== -1){
+                if(this.currentNotes.indexOf(this.positionToNote[i]+"#") !== -1){
                     ctx!.fillStyle = "#FF003D";
                 }
                 ctx!.fillRect(i*width/15 + 3*width/60, 0, width/30, 3*height/5)
@@ -52,7 +54,7 @@ export class KeyboardViewer implements IMusicNotationViewer{
     }
 
     getActualToneKey(): string {
-        return "";
+        return this.currentNotes.sort().join("");
     }
 
 }
