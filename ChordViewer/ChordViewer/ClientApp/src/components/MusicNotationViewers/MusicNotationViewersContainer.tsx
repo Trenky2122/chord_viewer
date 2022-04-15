@@ -4,11 +4,14 @@ import MusicSheetViewer from "./MusicSheetViewer/MusicSheetViewer";
 import {ChordNameViewer} from "./MusicSheetViewer/ChordNameViewer";
 import LocalizedStrings from "react-localization";
 import {KeyboardViewer} from "./MusicSheetViewer/KeyboardViewer";
+import ContextMenu from "./MusicSheetViewer/ContextMenu/ContextMenu";
 const MusicNotationViewersContainer = ()=>{
-    let viewers : IMusicNotationViewer[] = useMemo(()=>[new ChordNameViewer("input1"),
-        new MusicSheetViewer("canvas1"), new KeyboardViewer("canvas2")], [])
     let [actualToneKey, setActualToneKey] = useState("CEG");
-    useEffect(()=>viewers.forEach(viewer => {
+    useEffect(()=>{
+        let contextMenu = new ContextMenu("musicSheetContainer");
+        let viewers : IMusicNotationViewer[] = [new ChordNameViewer("input1"),
+            new MusicSheetViewer("canvas1"), new KeyboardViewer("canvas2", contextMenu)];
+        viewers.forEach(viewer => {
             viewer.View(actualToneKey);
             viewer.RepresentativeElement?.addEventListener("input", ()=>{
                 let newToneKey = viewer.getActualToneKey();
@@ -16,7 +19,7 @@ const MusicNotationViewersContainer = ()=>{
                 setActualToneKey(newToneKey);
             });
         }
-    ), [actualToneKey, viewers]);
+    )}, [actualToneKey]);
     let localization = new LocalizedStrings({
         en: {
             chord_name: "Chord name: ",
@@ -30,7 +33,7 @@ const MusicNotationViewersContainer = ()=>{
         }
     });
     return (
-            <div className={"container-fluid"}>
+            <div className={"container-fluid"} id={"musicSheetContainer"}>
                 <div className={"row"}>
                     <label className={"me-1"} htmlFor={"input1"}>{localization.chord_name}</label>
                 </div>

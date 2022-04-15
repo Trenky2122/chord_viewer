@@ -9,30 +9,6 @@ export class MusicSheetViewer implements IMusicNotationViewer{
 
     RepresentativeElement?: HTMLCanvasElement;
 
-    notePositions:{[name: string]: number}  = {
-        "Cb": 9,
-        "C": 9,
-        "C#": 9,
-        "Db": 10,
-        "D": 10,
-        "D#": 10,
-        "Eb": 11,
-        "E": 11,
-        "E#": 11,
-        "Fb": 12,
-        "F": 12,
-        "F#": 12,
-        "Gb": 13,
-        "G": 13,
-        "G#": 13,
-        "Ab": 7,
-        "A": 7,
-        "A#": 7,
-        "Bb": 8,
-        "B": 8,
-        "B#": 8,
-    }
-
     getActualToneKey(){
         return "";
     }
