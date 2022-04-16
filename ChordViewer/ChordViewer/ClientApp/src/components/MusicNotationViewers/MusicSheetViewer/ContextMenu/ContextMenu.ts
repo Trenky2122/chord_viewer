@@ -24,23 +24,21 @@ class ContextMenu{
     }
 
     view(x:number, y:number, parent: string, addNote: boolean, removeNote: boolean,
-         addSharp: boolean, addB: boolean, removeAccidental: boolean){
+         addSharp: boolean, removeSharpNote: boolean){
         this.currentX = x;
         this.currentY = y;
         let localization = new LocalizedStrings({
             en: {
-                addNote: "Add this note",
+                addNote: (addSharp||removeSharpNote)?"Add this note (♮)":"Add this note",
                 removeNote: "Remove this note",
-                addSharp: "Add #",
-                addB: "Add b",
-                removeAccidentals: "Remove accidental"
+                addSharp: "Add this note with #",
+                removeAccidentals: "Remove note with #"
             },
             sk: {
-                addNote: "Pridať túto notu",
+                addNote: (addSharp||removeSharpNote)?"Pridať túto notu (♮)":"Pridať túto notu",
                 removeNote: "Odstrániť túto notu",
-                addSharp: "Pridať #",
-                addB: "Pridať b",
-                removeAccidentals: "Odstrániť predznamenanie"
+                addSharp: "Pridať túto notu s #",
+                removeAccidentals: "Odstrániť notu aj s #"
             }
         })
         let list = "<ul class='contextMenu'>";
@@ -55,13 +53,9 @@ class ContextMenu{
             list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"addSharp\"));' class='contextMenuItem'>"+localization.addSharp+"</li>";
         }
-        if(addB){
+        if(removeSharpNote){
             list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"addB\"));' class='contextMenuItem'>"+localization.addB+"</li>";
-        }
-        if(removeAccidental){
-            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"removeAccidental\"));' class='contextMenuItem'>"+localization.removeAccidentals+"</li>";
+                ".dispatchEvent(new CustomEvent(\"removeSharp\"));' class='contextMenuItem'>"+localization.removeAccidentals+"</li>";
         }
         list+="</ul>";
         this.el.innerHTML = list;
@@ -74,17 +68,6 @@ class ContextMenu{
     hide(){
         this.el.style.display = "none";
         this.viewing=false;
-    }
-
-    toggleView(x:number, y:number, parent: string, addNote: boolean, removeNote: boolean,
-               addSharp: boolean, addB: boolean, removeAccidental: boolean){
-        console.log(x, y);
-        if(this.viewing){
-            this.hide();
-        }
-        else {
-            this.view(x, y, parent, addNote, removeNote, addSharp, addB, removeAccidental);
-        }
     }
 }
 export default ContextMenu;

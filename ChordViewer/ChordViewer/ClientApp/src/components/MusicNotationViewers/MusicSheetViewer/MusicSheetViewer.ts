@@ -1,25 +1,33 @@
 import {IMusicNotationViewer} from "../IMusicNotationViewer";
 import {Accidental, Vex, Voice} from "vexflow";
 import {Utils} from "../../../utils/Utils";
+import ContextMenu from "./ContextMenu/ContextMenu";
 
 
 export class MusicSheetViewer implements IMusicNotationViewer{
-    constructor(private canvasElementId: string) {
+    constructor(private canvasElementId: string, private contextMenu: ContextMenu) {
+        this.RepresentativeElement=document.getElementById(this.canvasElementId) as HTMLCanvasElement;
+        this.RepresentativeElement.addEventListener('contextmenu', this.handleRightClick.bind(this), false);
+        this.RepresentativeElement.addEventListener('click', this.handleClick.bind(this), false);
+        this.RepresentativeElement.addEventListener('addNote', this.addNote.bind(this), false);
+        this.RepresentativeElement.addEventListener('removeNote', this.removeNote.bind(this), false);
+        this.RepresentativeElement.addEventListener('addSharp', this.addNoteSharp.bind(this), false);
+        this.RepresentativeElement.addEventListener('removeSharp', this.removeNoteSharp.bind(this), false);
     }
+    private lastClickedNote = "";
+    RepresentativeElement: HTMLCanvasElement;
 
-    RepresentativeElement?: HTMLCanvasElement;
-
-    getActualToneKey(){
-        return "";
+    getActualToneKey(): string{
+        return this.currentNotes.sort().join("");
     }
-    private actualToneKey = "";
 
     public View(toneKey: string): boolean {
         if(toneKey === this.actualToneKey)
             return true;
+        if(this.RepresentativeElement == null)
+            return false;
         this.actualToneKey = toneKey;
         let VF = Vex.Flow;
-        this.RepresentativeElement=document.getElementById(this.canvasElementId) as HTMLCanvasElement;
 
         let WorkspaceInformation = {
             // The <canvas> element in which you're going to work
@@ -44,12 +52,12 @@ export class MusicSheetViewer implements IMusicNotationViewer{
         stave.addClef("treble").addTimeSignature("4/4");
         stave.setContext(context).draw();
 
-        let tones = Utils.GetNotesFromToneKey(toneKey);
-        if(tones.length === 0){
+        this.currentNotes = Utils.GetNotesFromToneKey(toneKey);
+        if(this.currentNotes.length === 0){
             stave.setContext(context).draw();
             return true;
         }
-        let chord1: [string, number][] = tones.map(tone => [tone.toLowerCase() , "ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?3:4]);
+        let chord1: [string, number][] = this.currentNotes.map(tone => [tone.toLowerCase() , "ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?3:4]);
         let chord2: [string, number][] = chord1.slice();
         let newLast: [string, number] = [...chord2[0]];
         newLast[1] = newLast[1]+1;
@@ -79,6 +87,55 @@ export class MusicSheetViewer implements IMusicNotationViewer{
 
         voice.draw(context, stave);
         return true;
+    }
+
+    private actualToneKey = "";
+    private currentNotes: string[] = [];
+
+    handleRightClick(e: MouseEvent){
+        e.preventDefault();
+        let note = this.getNoteFromYPosition(e.offsetY);
+        let containsClean = this.currentNotes.indexOf(note) !== -1;
+        let containsSharp = this.currentNotes.indexOf(note+ "#") !== -1;
+        this.contextMenu.view(e.pageX, e.pageY, this.canvasElementId, !containsClean,
+            containsClean, !containsSharp, containsSharp);
+        this.lastClickedNote = note;
+    }
+
+    handleClick(e: MouseEvent){
+        e.preventDefault();
+        this.contextMenu.hide();
+    }
+
+    private getNoteFromYPosition(y: number): string{
+        let positions = ["A", "G", "F", "E", "D", "C", "B"];
+        return positions[Math.floor((y+2)/5) % 7];
+    }
+
+    addNote(){
+        this.currentNotes.push(this.lastClickedNote);
+        this.currentNotes = this.currentNotes.sort();
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
+    }
+
+    removeNote(){
+        this.currentNotes = this.currentNotes.filter(x => x !== this.lastClickedNote);
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
+    }
+
+    addNoteSharp(){
+        this.currentNotes.push(this.lastClickedNote+"#");
+        this.currentNotes = this.currentNotes.sort();
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
+    }
+
+    removeNoteSharp(){
+        this.currentNotes = this.currentNotes.filter(x => x !== this.lastClickedNote+"#");
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
     }
 }
 

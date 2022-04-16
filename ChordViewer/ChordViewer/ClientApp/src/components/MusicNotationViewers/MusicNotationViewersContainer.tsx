@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IMusicNotationViewer} from "./IMusicNotationViewer";
 import MusicSheetViewer from "./MusicSheetViewer/MusicSheetViewer";
 import {ChordNameViewer} from "./MusicSheetViewer/ChordNameViewer";
@@ -11,7 +11,7 @@ const MusicNotationViewersContainer = ()=>{
     useEffect(()=>{
         let contextMenu = new ContextMenu("musicSheetContainer");
         let vws = [new ChordNameViewer("input1"),
-            new MusicSheetViewer("canvas1"), new KeyboardViewer("canvas2", contextMenu)];
+            new MusicSheetViewer("canvas1", contextMenu), new KeyboardViewer("canvas2", contextMenu)];
         setViewers(vws);
         vws.forEach(viewer => {
             viewer.RepresentativeElement?.addEventListener("notesUpdated", ()=>{
