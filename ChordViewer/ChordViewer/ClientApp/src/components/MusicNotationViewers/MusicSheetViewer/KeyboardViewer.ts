@@ -8,6 +8,7 @@ export class KeyboardViewer implements IMusicNotationViewer{
     constructor(private canvasId: string, private contextMenu: ContextMenu) {
         this.RepresentativeElement = document.getElementById(this.canvasId) as HTMLCanvasElement;
         this.RepresentativeElement.addEventListener('contextmenu', this.handleRightClick.bind(this), false);
+        this.RepresentativeElement.addEventListener('click', this.handleClick.bind(this), false);
         this.RepresentativeElement.addEventListener('addNote', this.addSelectedNote.bind(this), false);
         this.RepresentativeElement.addEventListener('removeNote', this.removeSelectedNote.bind(this), false);
     }
@@ -69,8 +70,13 @@ export class KeyboardViewer implements IMusicNotationViewer{
         if(clickedPixel[1] === 0)
             note += "#";
         this.contextMenu.view(e.pageX, e.pageY, this.canvasId, this.currentNotes.indexOf(note) === -1,
-            this.currentNotes.indexOf(note) !== -1,false, false, false);
+            this.currentNotes.indexOf(note) !== -1,false, false);
         this.lastClickedNote = note;
+    }
+
+    handleClick(e: MouseEvent){
+        e.preventDefault();
+        this.contextMenu.hide();
     }
 
     addSelectedNote(){

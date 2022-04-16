@@ -46,7 +46,9 @@ export class ChordNameViewer implements IMusicNotationViewer{
 
     getActualToneKey(): string{
         let chordString = this.RepresentativeElement?.value!;
-        let chord = {
+        let chord: {chord_type: ChordType, baseTone: string, add_2_flat: boolean,
+        add_2: boolean, add_2_sharp: boolean, add_4: boolean, add_4_sharp: boolean,
+        add_6_flat: boolean, add_6: boolean, add_7_flat: boolean, add_7: boolean} = {
             baseTone: "C",
             chord_type: ChordType.Dur,
             add_2_flat: false,
@@ -79,7 +81,7 @@ export class ChordNameViewer implements IMusicNotationViewer{
             chord.add_2 = chordString.indexOf("22#") !== -1;
         if (chord.add_2_sharp && chord.add_2_flat)
             chord.add_2 = chordString.indexOf("2b22#") !== -1;
-        chord.add_4_sharp = chordString.indexOf("2b22#") !== -1;
+        chord.add_4_sharp = chordString.indexOf("4#") !== -1;
         chord.add_4 = chordString.indexOf("4") !== -1 && !chord.add_4_sharp
         if (chord.add_4_sharp)
             chord.add_4 = chordString.indexOf("44#") !== -1;
