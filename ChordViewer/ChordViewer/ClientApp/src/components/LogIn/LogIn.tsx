@@ -35,8 +35,10 @@ const LogIn = ()=>{
             submitSuccessful: "Prihásenie bolo úspešné",
             forgotPassword: "Zabudnuté heslo"
         }
-    })
+    });
     let [currentUser, setCurrentUser] = useContext(UserContext);
+    if(currentUser.id !== 0)
+        navigate("/");
     const [username, setUsername]: [string, any] = useState("");
     const [password, setPassword]: [string, any] = useState("");
     return (
@@ -47,7 +49,7 @@ const LogIn = ()=>{
                         <label className={"float-end"} htmlFor={"username"}>{localization.username}</label>
                     </div>
                     <div className={"col"}>
-                        <input id={"username"} type={"text"} required value={username} onChange={(e) => {
+                        <input autoComplete={"username"} id={"username"} type={"text"} required value={username} onChange={(e) => {
                             setUsername(e.target.value)
                         }}/>
                     </div>
@@ -57,7 +59,7 @@ const LogIn = ()=>{
                         <label className={"float-end"} htmlFor={"password"}>{localization.password}</label>
                     </div>
                     <div className={"col"}>
-                        <input id={"password"} required type={"password"} value={password} onChange={(e) => {
+                        <input autoComplete={"current-password"} id={"password"} required type={"password"} value={password} onChange={(e) => {
                             setPassword(e.target.value)
                         }}/>
                     </div>

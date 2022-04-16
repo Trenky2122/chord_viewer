@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Button, Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink} from 'reactstrap';
+import {Button, Container, Navbar, NavbarBrand} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import { UserContext } from '../App';
