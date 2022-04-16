@@ -7,19 +7,23 @@ import {KeyboardViewer} from "./MusicSheetViewer/KeyboardViewer";
 import ContextMenu from "./MusicSheetViewer/ContextMenu/ContextMenu";
 const MusicNotationViewersContainer = ()=>{
     let [actualToneKey, setActualToneKey] = useState("CEG");
+    let [viewers, setViewers] : [IMusicNotationViewer[], any ]= useState([]);
     useEffect(()=>{
         let contextMenu = new ContextMenu("musicSheetContainer");
-        let viewers : IMusicNotationViewer[] = [new ChordNameViewer("input1"),
+        let vws = [new ChordNameViewer("input1"),
             new MusicSheetViewer("canvas1"), new KeyboardViewer("canvas2", contextMenu)];
-        viewers.forEach(viewer => {
-            viewer.View(actualToneKey);
-            viewer.RepresentativeElement?.addEventListener("input", ()=>{
+        setViewers(vws);
+        vws.forEach(viewer => {
+            viewer.RepresentativeElement?.addEventListener("notesUpdated", ()=>{
                 let newToneKey = viewer.getActualToneKey();
                 console.log(newToneKey);
                 setActualToneKey(newToneKey);
             });
         }
-    )}, [actualToneKey]);
+    )}, []);
+    useEffect(()=>{
+        viewers.forEach(viewer=>viewer.View(actualToneKey));
+    }, [actualToneKey, viewers])
     let localization = new LocalizedStrings({
         en: {
             chord_name: "Chord name: ",

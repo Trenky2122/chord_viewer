@@ -38,6 +38,9 @@ export class ChordNameViewer implements IMusicNotationViewer{
     private currentToneKey = "";
     public RepresentativeElement?: HTMLInputElement;
     constructor(private inputId: string) {
+        this.RepresentativeElement = document.getElementById(this.inputId) as HTMLInputElement;
+        this.RepresentativeElement.addEventListener("keyup",
+            ()=>this.RepresentativeElement?.dispatchEvent(new CustomEvent("notesUpdated")));
     }
 
     getActualToneKey(): string{
@@ -184,7 +187,6 @@ export class ChordNameViewer implements IMusicNotationViewer{
     View(toneKey: string): boolean{
         if(this.currentToneKey === toneKey || toneKey === "")
             return true;
-        this.RepresentativeElement = document.getElementById(this.inputId) as HTMLInputElement;
         if(!this.RepresentativeElement)
             return false;
         this.currentToneKey=toneKey;

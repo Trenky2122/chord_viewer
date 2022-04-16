@@ -12,3 +12,26 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+
+.contextMenu{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: white;
+  cursor: default;
+}
+
+.contextMenuItem {
+  border-bottom: solid 1px #CCC;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.contextMenuItem:last-child {
+  border: none;
+}
+
+.contextMenuItem:hover {
+  background: #EEEEEE;
+}

@@ -8,6 +8,8 @@ export class KeyboardViewer implements IMusicNotationViewer{
     constructor(private canvasId: string, private contextMenu: ContextMenu) {
         this.RepresentativeElement = document.getElementById(this.canvasId) as HTMLCanvasElement;
         this.RepresentativeElement.addEventListener('contextmenu', this.handleRightClick.bind(this), false);
+        this.RepresentativeElement.addEventListener('addNote', this.addSelectedNote.bind(this), false);
+        this.RepresentativeElement.addEventListener('removeNote', this.removeSelectedNote.bind(this), false);
     }
 
     private currentNotes: string[] = [];
@@ -58,8 +60,6 @@ export class KeyboardViewer implements IMusicNotationViewer{
 
     handleRightClick(e: MouseEvent){
         e.preventDefault();
-        this.contextMenu.view(e.pageX, e.pageY, this.canvasId, true, true,
-            false, false, false)
         let ctx = this.RepresentativeElement!.getContext("2d");
         let clickedPixel = ctx!.getImageData(e.offsetX, e.offsetY, 1, 1,).data;
         let pixelCodedNote = clickedPixel[2] % 16;
@@ -68,7 +68,22 @@ export class KeyboardViewer implements IMusicNotationViewer{
         let note = ["G", "", "", "", "", "", "", "", "", "", "A", "B", "C", "D", "E", "F"][pixelCodedNote];
         if(clickedPixel[1] === 0)
             note += "#";
-        console.log(note);
+        this.contextMenu.view(e.pageX, e.pageY, this.canvasId, this.currentNotes.indexOf(note) === -1,
+            this.currentNotes.indexOf(note) !== -1,false, false, false);
+        this.lastClickedNote = note;
+    }
+
+    addSelectedNote(){
+        this.currentNotes.push(this.lastClickedNote);
+        this.currentNotes = this.currentNotes.sort();
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
+    }
+
+    removeSelectedNote(){
+        this.currentNotes = this.currentNotes.filter(x => x !== this.lastClickedNote);
+        this.contextMenu.hide();
+        this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
     }
 
     positionToLastColorLetter(pos: number){

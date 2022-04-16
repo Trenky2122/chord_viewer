@@ -45,22 +45,22 @@ class ContextMenu{
         })
         let list = "<ul class='contextMenu'>";
         if(addNote)
-            list+="<li id='addChordButton' onclick='document.getElementById("+parent+")" +
+            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"addNote\"));' class='contextMenuItem'>"+localization.addNote+"</li>";
         if(removeNote){
-            list+="<li id='editChordButton' onclick='document.getElementById("+parent+")" +
+            list+="<li id='editChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"removeNote\"));' class='contextMenuItem'>"+localization.removeNote+"</li>"
         }
         if(addSharp){
-            list+="<li id='addChordButton' onclick='document.getElementById("+parent+")" +
+            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"addSharp\"));' class='contextMenuItem'>"+localization.addSharp+"</li>";
         }
         if(addB){
-            list+="<li id='addChordButton' onclick='document.getElementById("+parent+")" +
+            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"addB\"));' class='contextMenuItem'>"+localization.addB+"</li>";
         }
         if(removeAccidental){
-            list+="<li id='addChordButton' onclick='document.getElementById("+parent+")" +
+            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
                 ".dispatchEvent(new CustomEvent(\"removeAccidental\"));' class='contextMenuItem'>"+localization.removeAccidentals+"</li>";
         }
         list+="</ul>";
