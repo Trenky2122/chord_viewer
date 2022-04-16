@@ -1,6 +1,6 @@
 export class Utils{
     public static GetNotesFromToneKey(toneKey: string):string[]{
-        let tones = [];
+        let tones: string[] = [];
         for(let i=0; i<toneKey.length; i++){
             let begin = i;
             let end = i+1;
@@ -14,6 +14,7 @@ export class Utils{
             if(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(tones[i])===-1)
                 return [];
         }
+        tones = tones.filter((tone, i) => tones.indexOf(tone)===i);
         return tones;
     }
 }

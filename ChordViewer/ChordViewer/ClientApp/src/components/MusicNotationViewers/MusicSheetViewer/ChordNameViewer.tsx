@@ -5,7 +5,8 @@ enum ChordType{
     Dur,
     Mol,
     Dim,
-    FifthSharp
+    FifthSharp,
+    Pow
 }
 
 export class ChordNameViewer implements IMusicNotationViewer{
@@ -97,6 +98,8 @@ export class ChordNameViewer implements IMusicNotationViewer{
             chord.chord_type = ChordType.Dim;
         else if (chordString.indexOf("5+") !== -1)
             chord.chord_type = ChordType.FifthSharp;
+        else if (chordString.indexOf("pow") !== -1)
+            chord.chord_type = ChordType.Pow;
         let tones = [chord.baseTone];
         let noteValue = 0;
         let note = "";
@@ -135,6 +138,10 @@ export class ChordNameViewer implements IMusicNotationViewer{
                 tones.push(note);
                 tones.push(note2);
                 break;
+            case ChordType.Pow:
+                noteValue = ChordNameViewer.getNoteInIntervalFromBase(this.noteValues[chord.baseTone], 4);
+                note = this.valueToNote[noteValue];
+                tones.push(note);
         }
         if(chord.add_2_flat){
             let noteValue = ChordNameViewer.getNoteInIntervalFromBase(this.noteValues[chord.baseTone], 1);
@@ -221,9 +228,12 @@ export class ChordNameViewer implements IMusicNotationViewer{
                 chordTypeString = "mi";
                 chordType = ChordType.Mol;
             }
+            else if(toneValues.indexOf((baseToneValue +4)%12) !== -1) {
+                chordType = ChordType.Dur;
+            }
             else {
-                toneValues=toneValues.filter(x => x !== ChordNameViewer.getNoteInIntervalFromBase(baseToneValue , 7)
-                    && x !== ChordNameViewer.getNoteInIntervalFromBase(baseToneValue , 4));
+                chordType = ChordType.Pow;
+                chordTypeString = "pow";
             }
         }
         toneValues=ChordNameViewer.filterBaseChordTones(toneValues, baseIndex, chordType);
