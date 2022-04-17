@@ -5,12 +5,13 @@ import {ChordNameViewer} from "./MusicSheetViewer/ChordNameViewer";
 import LocalizedStrings from "react-localization";
 import {KeyboardViewer} from "./MusicSheetViewer/KeyboardViewer";
 import ContextMenu from "./MusicSheetViewer/ContextMenu/ContextMenu";
+import {TabsViewer} from "./MusicSheetViewer/TabsViewer";
 const MusicNotationViewersContainer = ()=>{
-    let [actualToneKey, setActualToneKey] = useState("CEG");
+    let [actualToneKey, setActualToneKey] = useState("G");
     let [viewers, setViewers] : [IMusicNotationViewer[], any ]= useState([]);
     useEffect(()=>{
         let contextMenu = new ContextMenu("musicSheetContainer");
-        let vws = [new ChordNameViewer("input1"),
+        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2"),
             new MusicSheetViewer("canvas1", contextMenu), new KeyboardViewer("canvas2", contextMenu)];
         setViewers(vws);
         vws.forEach(viewer => {
@@ -29,11 +30,13 @@ const MusicNotationViewersContainer = ()=>{
             chord_name: "Chord name: ",
             tones: "Tones",
             piano: "Piano",
+            tabs: "Tabs",
         },
         sk: {
             chord_name: "Meno akordu: ",
             tones: "Noty",
             piano: "Klavír",
+            tabs: "Taby",
         }
     });
     return (
@@ -56,6 +59,12 @@ const MusicNotationViewersContainer = ()=>{
                     <div className={"col"}>
                         <p>{localization.piano}</p>
                         <canvas id={"canvas2"} width={420} height={100} />
+                    </div>
+                </div>
+                <div className={"row"}>
+                    <div className={"col"}>
+                        <p>{localization.tabs}</p>
+                        <div id={"div2"} />
                     </div>
                 </div>
             </div>

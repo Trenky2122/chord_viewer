@@ -35,8 +35,8 @@ export class KeyboardViewer implements IMusicNotationViewer{
         }
         for(let i=15; i>=0; i--){
             ctx!.beginPath();
-            ctx!.moveTo(i*width/15, 0)
-            ctx!.lineTo(i*width/15, height)
+            ctx!.moveTo(i*width/15, 0);
+            ctx!.lineTo(i*width/15, height);
             ctx!.stroke();
             if(i!==2 && i!==6 && i!==9 && i!==13 && i!==14 && i!==15){
                 ctx!.fillStyle = "#00000" + this.positionToLastColorLetter(i);
@@ -46,14 +46,11 @@ export class KeyboardViewer implements IMusicNotationViewer{
                 ctx!.fillRect(i*width/15 + 3*width/60, 0, width/30, 3*height/5)
             }
         }
-
         ctx!.beginPath();
-        ctx!.moveTo(0, 0)
-        ctx!.lineTo(width, 0)
-        ctx!.stroke();
-        ctx!.beginPath();
-        ctx!.moveTo(width, height)
-        ctx!.lineTo(0, height)
+        ctx!.moveTo(0, 0);
+        ctx!.lineTo(width, 0);
+        ctx!.moveTo(width, height);
+        ctx!.lineTo(0, height);
         ctx!.stroke();
 
         return true;

@@ -20,4 +20,8 @@ export class BackendService{
     public static GetCurrentUser(): Promise<AxiosResponse<User>>{
         return BackendService.axios.get(BackendService.baseUrl+"api/User/me");
     }
+
+    public static GetTabsForToneKey(toneKey: string){
+        return BackendService.axios.get(BackendService.baseUrl + "api/Tab/tabsForToneKey/"+toneKey);
+    }
 }
