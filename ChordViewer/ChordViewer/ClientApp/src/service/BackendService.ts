@@ -22,6 +22,6 @@ export class BackendService{
     }
 
     public static GetTabsForToneKey(toneKey: string){
-        return BackendService.axios.get(BackendService.baseUrl + "api/Tab/tabsForToneKey/"+toneKey);
+        return BackendService.axios.get(BackendService.baseUrl + "api/Tab/tabsForToneKey/"+escape(toneKey));
     }
 }
