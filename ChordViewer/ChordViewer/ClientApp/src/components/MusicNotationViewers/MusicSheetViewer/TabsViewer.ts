@@ -92,7 +92,7 @@ export class TabsViewer implements IMusicNotationViewer{
                    b.stringBegin * height / (tab.stringCount - 1) + yDelta);
                ctx!.bezierCurveTo(b.fret * width / (maxFret - minFret) - width / (2 * (maxFret - minFret)) + xDelta - radius,
                    b.stringBegin * height / (tab.stringCount - 1) + yDelta,
-                   (b.fret) * width / (maxFret - minFret) - width / ((maxFret - minFret)) + xDelta + i - radius,
+                   (b.fret-1) * width / (maxFret - minFret) + xDelta + i - radius,
                    ((b.stringBegin+b.stringEnd)/2) * height / (tab.stringCount - 1) + yDelta,
                    b.fret * width / (maxFret - minFret) - width / (2 * (maxFret - minFret)) + xDelta - radius,
                    b.stringEnd * height / (tab.stringCount - 1) + yDelta);
