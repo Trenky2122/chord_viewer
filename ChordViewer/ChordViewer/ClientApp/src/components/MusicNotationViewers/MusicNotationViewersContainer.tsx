@@ -4,14 +4,14 @@ import MusicSheetViewer from "./MusicSheetViewer/MusicSheetViewer";
 import {ChordNameViewer} from "./MusicSheetViewer/ChordNameViewer";
 import LocalizedStrings from "react-localization";
 import {KeyboardViewer} from "./MusicSheetViewer/KeyboardViewer";
-import ContextMenu from "./MusicSheetViewer/ContextMenu/ContextMenu";
 import {TabsViewer} from "./MusicSheetViewer/TabsViewer";
+import TabsContextMenu from "./MusicSheetViewer/ContextMenu/TabsContextMenu";
 const MusicNotationViewersContainer = ()=>{
-    let [actualToneKey, setActualToneKey] = useState("G");
+    let [actualToneKey, setActualToneKey] = useState("CEG");
     let [viewers, setViewers] : [IMusicNotationViewer[], any ]= useState([]);
     useEffect(()=>{
-        let contextMenu = new ContextMenu("musicSheetContainer");
-        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2"),
+        let contextMenu = new TabsContextMenu("musicSheetContainer");
+        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2", contextMenu),
             new MusicSheetViewer("canvas1", contextMenu), new KeyboardViewer("canvas2", contextMenu)];
         setViewers(vws);
         vws.forEach(viewer => {

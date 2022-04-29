@@ -8,7 +8,7 @@ export interface Tab{
     id: number;
     toneKey: string;
     authorId: number;
-    author: User;
+    author?: User;
     stringCount: number;
     tabStrings: TabString[];
     tabBarre: TabBarre[];
@@ -21,13 +21,13 @@ export interface TabString{
     fret: number;
     suggestedFinger: number;
     tabId: number;
-    tab: Tab;
+    tab?: Tab;
 }
 
 export interface TabBarre{
     id: number;
     tabId: number;
-    tab: Tab;
+    tab?: Tab;
     fret: number;
     stringBegin: number;
     stringEnd: number;

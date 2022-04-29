@@ -2,10 +2,10 @@ import LocalizedStrings from "react-localization";
 
 
 class ContextMenu{
-    private el: HTMLDivElement;
-    private viewing: boolean=false;
-    private currentX: number = 0;
-    private currentY: number = 0;
+    protected el: HTMLDivElement;
+    protected viewing: boolean=false;
+    protected currentX: number = 0;
+    protected currentY: number = 0;
     public get X(){
         return this.currentX;
     }
@@ -43,22 +43,20 @@ class ContextMenu{
         })
         let list = "<ul class='contextMenu'>";
         if(addNote)
-            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"addNote\"));' class='contextMenuItem'>"+localization.addNote+"</li>";
-        if(removeNote){
-            list+="<li id='editChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"removeNote\"));' class='contextMenuItem'>"+localization.removeNote+"</li>"
-        }
-        if(addSharp){
-            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"addSharp\"));' class='contextMenuItem'>"+localization.addSharp+"</li>";
-        }
+            list += this.createListItem(parent, "addChordButton", "addNote", localization.addNote);
+        if(removeNote)
+            list += this.createListItem(parent, "editChordButton", "removeNote", localization.removeNote);
+        if(addSharp)
+            list += this.createListItem(parent, "addChordButton", "addSharp", localization.addSharp);
         if(removeSharpNote){
-            list+="<li id='addChordButton' onclick='document.getElementById(\""+parent+"\")" +
-                ".dispatchEvent(new CustomEvent(\"removeSharp\"));' class='contextMenuItem'>"+localization.removeAccidentals+"</li>";
+            list += this.createListItem(parent, "removeChordButton", "removeSharp", localization.removeAccidentals)
         }
         list+="</ul>";
         this.el.innerHTML = list;
+        this.show(x, y);
+    }
+
+    protected show(x: number, y: number){
         this.el.style.display = "block";
         this.el.style.left = x + "px";
         this.el.style.top = y + "px";
@@ -68,6 +66,11 @@ class ContextMenu{
     hide(){
         this.el.style.display = "none";
         this.viewing=false;
+    }
+
+    createListItem(parent: string, id: string, event: string, text: string): string{
+        return "<li id='"+id+"' onclick='document.getElementById(\""+parent+"\")" +
+            ".dispatchEvent(new CustomEvent(\""+event+"\"));' class='contextMenuItem'>"+text+"</li>"
     }
 }
 export default ContextMenu;
