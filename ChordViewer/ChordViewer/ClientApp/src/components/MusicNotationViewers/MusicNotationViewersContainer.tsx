@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {IMusicNotationViewer} from "./IMusicNotationViewer";
 import MusicSheetViewer from "./MusicSheetViewer/MusicSheetViewer";
 import {ChordNameViewer} from "./MusicSheetViewer/ChordNameViewer";
@@ -6,22 +6,30 @@ import LocalizedStrings from "react-localization";
 import {KeyboardViewer} from "./MusicSheetViewer/KeyboardViewer";
 import {TabsViewer} from "./MusicSheetViewer/TabsViewer";
 import TabsContextMenu from "./MusicSheetViewer/ContextMenu/TabsContextMenu";
+import {User} from "../../models/BackendModels";
+import {UserContext} from "../../App";
 const MusicNotationViewersContainer = ()=>{
+    let [currentUser, setCurrentUser]: [User, (user: User)=>void] = useContext(UserContext);
     let [actualToneKey, setActualToneKey] = useState("CEG");
     let [viewers, setViewers] : [IMusicNotationViewer[], any ]= useState([]);
     useEffect(()=>{
+        setViewers([]);
         let contextMenu = new TabsContextMenu("musicSheetContainer");
-        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2", contextMenu),
+        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2", contextMenu, currentUser.id),
             new MusicSheetViewer("canvas1", contextMenu), new KeyboardViewer("canvas2", contextMenu)];
         setViewers(vws);
-        vws.forEach(viewer => {
-            viewer.RepresentativeElement?.addEventListener("notesUpdated", ()=>{
-                let newToneKey = viewer.getActualToneKey();
-                console.log(newToneKey);
-                setActualToneKey(newToneKey);
-            });
-        }
-    )}, []);
+        vws.forEach(viewer =>
+            {
+                viewer.RepresentativeElement?.addEventListener("notesUpdated", ()=>
+                {
+                    let newToneKey = viewer.getActualToneKey();
+                    console.log(newToneKey);
+                    setActualToneKey(newToneKey);
+                });
+            }
+        );
+        console.log(vws);
+    }, [currentUser]);
     useEffect(()=>{
         viewers.forEach(viewer=>viewer.View(actualToneKey));
     }, [actualToneKey, viewers])

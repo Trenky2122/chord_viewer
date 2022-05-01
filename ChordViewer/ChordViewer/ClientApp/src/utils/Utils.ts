@@ -1,4 +1,7 @@
 export class Utils{
+    public static get toneSequence(): string[]{
+        return ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    }
     public static GetNotesFromToneKey(toneKey: string):string[]{
         let tones: string[] = [];
         for(let i=0; i<toneKey.length; i++){
@@ -11,7 +14,7 @@ export class Utils{
             tones.push(toneKey.substring(begin, end));
         }
         for (let i=0; i<tones.length; i++){
-            if(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(tones[i])===-1)
+            if(Utils.toneSequence.indexOf(tones[i])===-1)
                 return [];
         }
         tones = tones.filter((tone, i) => tones.indexOf(tone)===i);

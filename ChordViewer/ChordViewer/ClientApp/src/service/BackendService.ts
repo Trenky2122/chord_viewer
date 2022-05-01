@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {User} from "../models/BackendModels";
+import {Tab, User} from "../models/BackendModels";
 export class BackendService{
     private static axios = axios.create({
         withCredentials: true
@@ -21,7 +21,11 @@ export class BackendService{
         return BackendService.axios.get(BackendService.baseUrl+"api/User/me");
     }
 
-    public static GetTabsForToneKey(toneKey: string){
+    public static GetTabsForToneKey(toneKey: string): Promise<AxiosResponse<Tab[]>>{
         return BackendService.axios.get(BackendService.baseUrl + "api/Tab/tabsForToneKey/"+escape(toneKey));
+    }
+
+    public static SaveTab(tab: Tab): Promise<AxiosResponse>{
+        return BackendService.axios.post(BackendService.baseUrl+"api/Tab/createTab", tab);
     }
 }

@@ -23,33 +23,40 @@ namespace ChordViewer.Controllers
         [HttpPost("createTab")]
         public async Task<ActionResult<Tab>> CreateTab([FromBody] Tab tab)
         {
-            if (tab.Id != 0)
-                return BadRequest();
-            if(tab.TabStrings != null)
-            {
-                foreach (var str in tab.TabStrings)
+            try 
+            { 
+                if (tab.Id != 0)
+                    return BadRequest();
+                if (tab.TabStrings != null)
                 {
-                    if (str.Id != 0)
+                    foreach (var str in tab.TabStrings)
+                    {
+                        if (str.Id != 0)
+                            return BadRequest();
+                    }
+                    //check if any order of string is contained twice
+                    if (tab.TabStrings.DistinctBy(x => x.StringOrder).Count() != tab.TabStrings.Count)
                         return BadRequest();
                 }
-                //check if any order of string is contained twice
-                if(tab.TabStrings.DistinctBy(x => x.StringOrder).Count() != tab.TabStrings.Count)
-                    return BadRequest();
-            }
 
-            if(tab.TabBarre != null)
-            {
-                foreach(var barre in tab.TabBarre)
+                if (tab.TabBarre != null)
                 {
-                    if(barre.Id != 0)
+                    foreach (var barre in tab.TabBarre)
                     {
-                        return BadRequest();
+                        if (barre.Id != 0)
+                        {
+                            return BadRequest();
+                        }
                     }
                 }
+                _dbContext.Tabs.Add(tab);
+                await _dbContext.SaveChangesAsync();
+                return Ok(tab);
             }
-            _dbContext.Tabs.Add(tab);
-            await _dbContext.SaveChangesAsync();
-            return Ok(tab);
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
     }
