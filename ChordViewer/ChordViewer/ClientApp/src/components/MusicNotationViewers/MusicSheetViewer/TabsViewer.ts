@@ -28,17 +28,12 @@ export class TabsViewer implements IMusicNotationViewer{
     View(toneKey: string): boolean {
         console.log(toneKey);
         this.RepresentativeElement.innerHTML = "";
-        BackendService.GetTabsForToneKey(toneKey).then(res => this.createTabContainerWithTabs(res.data))
-            .catch((err)=>{
-                if(err.response.status === 404)
-                    this.createTabContainerWithTabs([]);
-            });
+        this.createTabContainerWithTabs(toneKey);
         return true;
     }
 
-    createTabContainerWithTabs(tabs: Tab[]){
+    createTabContainerWithTabs(toneKey: string){
         this.RepresentativeElement.innerHTML = "";
-        let canvases = tabs.map(t => this.createTabCanvas(t));
         let containerFluid = document.createElement("div");
         containerFluid.className = "container-fluid";
         this.RepresentativeElement.appendChild(containerFluid);
@@ -86,14 +81,17 @@ export class TabsViewer implements IMusicNotationViewer{
         let containerTabs = document.createElement("div");
         containerTabs.className = "container-fluid";
         colTabs.appendChild(containerTabs);
-        canvases.forEach(canvas => {
-            let col = document.createElement("div");
-            col.className = "col";
-            col.appendChild(canvas);
-            let row = document.createElement("div");
-            row.className = "row";
-            row.appendChild(col);
-            containerTabs.appendChild(row);
+        BackendService.GetTabsForToneKey(toneKey).then(res => {
+            let canvases = res.data.map(t => this.createTabCanvas(t));
+            canvases.forEach(canvas => {
+                let col = document.createElement("div");
+                col.className = "col";
+                col.appendChild(canvas);
+                let row = document.createElement("div");
+                row.className = "row";
+                row.appendChild(col);
+                containerTabs.appendChild(row);
+            });
         });
     }
 
