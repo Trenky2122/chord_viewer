@@ -3,6 +3,7 @@ import {BackendService} from "../../../service/BackendService";
 import {Tab, TabString} from "../../../models/BackendModels";
 import TabsContextMenu from "./ContextMenu/TabsContextMenu";
 import {Utils} from "../../../utils/Utils";
+import LocalizedStrings from "react-localization";
 
 export class TabsViewer implements IMusicNotationViewer{
     RepresentativeElement: HTMLDivElement;
@@ -19,6 +20,18 @@ export class TabsViewer implements IMusicNotationViewer{
     barreStartFret?: number;
     barreStartFinger?: number;
     barreStartString?: number;
+    localization = new LocalizedStrings({
+       en: {
+           synchronize: "Synchronize",
+           save: "Save",
+           loginToSave: "Log in to save"
+       },
+        sk: {
+            synchronize: "Synchronizovať",
+            save: "Uložiť",
+            loginToSave: "Pre ukladanie sa musíte prihlásiť"
+        }
+    });
     private editorId = "editor_canvas";
     constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number) {
         this.RepresentativeElement = document.getElementById(parentDivId) as HTMLDivElement;
@@ -68,16 +81,23 @@ export class TabsViewer implements IMusicNotationViewer{
         col1Editor.appendChild(this.createEditor());
         let synchronizeButton=document.createElement("button");
         synchronizeButton.type = "button";
-        synchronizeButton.innerHTML= "Synchronize";
+        synchronizeButton.innerHTML= this.localization.synchronize;
         synchronizeButton.className ="btn btn-primary";
         synchronizeButton.addEventListener("click", ()=>this.synchronizeWithOthers());
         col2Editor.appendChild(synchronizeButton);
-        let saveButton=document.createElement("button");
-        saveButton.type = "button";
-        saveButton.innerHTML= "Save";
-        saveButton.className ="btn btn-primary";
-        saveButton.addEventListener("click", ()=>this.saveTab());
-        col3Editor.appendChild(saveButton);
+        if(this.userId !== 0) {
+            let saveButton = document.createElement("button");
+            saveButton.type = "button";
+            saveButton.innerHTML = this.localization.save;
+            saveButton.className = "btn btn-primary";
+            saveButton.addEventListener("click", () => this.saveTab());
+            col3Editor.appendChild(saveButton);
+        }
+        else{
+            let pLoginToSave = document.createElement("p");
+            pLoginToSave.innerHTML = this.localization.loginToSave;
+            col3Editor.appendChild(pLoginToSave);
+        }
         let containerTabs = document.createElement("div");
         containerTabs.className = "container-fluid";
         colTabs.appendChild(containerTabs);

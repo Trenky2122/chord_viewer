@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {Tab, User} from "../models/BackendModels";
+import {Collection, Tab, User} from "../models/BackendModels";
 export class BackendService{
     private static axios = axios.create({
         withCredentials: true
@@ -27,5 +27,20 @@ export class BackendService{
 
     public static SaveTab(tab: Tab): Promise<AxiosResponse>{
         return BackendService.axios.post(BackendService.baseUrl+"api/Tab/createTab", tab);
+    }
+
+    public static CreateUser(username: string, password: string){
+        const params = new URLSearchParams();
+        params.append('username', username);
+        params.append('password', password);
+        return BackendService.axios.post(BackendService.baseUrl+"api/User/createUser", params);
+    }
+
+    public static UserOwnCollections(userId: number): Promise<AxiosResponse<Collection>>{
+        return BackendService.axios.get(BackendService.baseUrl + "api/collectionsForUser/"+userId);
+    }
+
+    public static UserSharedCollections(userId: number): Promise<AxiosResponse<Collection>>{
+        return BackendService.axios.get(BackendService.baseUrl + "api/collectionsSharedWithUser/"+userId);
     }
 }

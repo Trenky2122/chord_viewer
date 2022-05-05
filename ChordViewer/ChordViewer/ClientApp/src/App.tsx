@@ -8,6 +8,7 @@ import {User} from "./models/BackendModels";
 import {Constants} from "./models/Constants";
 import {BackendService} from "./service/BackendService";
 import LogIn from "./components/LogIn/LogIn";
+import SignUp from "./components/SignUp/SignUp";
 
 export const UserContext: Context<[User, (user: User)=>void]> = createContext([Constants.defaultUser, (user: User)=>{return;}])
 const App = ()=>{
@@ -29,6 +30,7 @@ const App = ()=>{
                     <Routes>
                         <Route path={"/"} element={<Home />} />
                         <Route path={"/login"} element={<LogIn />} />
+                        <Route path={"/signup"} element={<SignUp />} />
                     </Routes>
                 </BrowserRouter>
             </UserContext.Provider>

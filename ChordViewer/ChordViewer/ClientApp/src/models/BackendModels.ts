@@ -33,3 +33,12 @@ export interface TabBarre{
     stringEnd: number;
     suggestedFinger: number;
 }
+
+export interface Collection{
+    name: string;
+    authorId: number;
+    author?: User;
+    isPublic: boolean;
+    tabRelations: any[];
+    userRelations: any[];
+}
