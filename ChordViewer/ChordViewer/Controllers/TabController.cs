@@ -3,6 +3,7 @@ using ChordViewer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ChordViewer.Controllers
 {
@@ -51,6 +52,7 @@ namespace ChordViewer.Controllers
                         }
                     }
                 }
+                tab.AuthorId = (await _dbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier))).Id;
                 _dbContext.Tabs.Add(tab);
                 await _dbContext.SaveChangesAsync();
                 return Ok(tab);

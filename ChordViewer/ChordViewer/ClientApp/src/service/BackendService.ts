@@ -37,10 +37,14 @@ export class BackendService{
     }
 
     public static UserOwnCollections(userId: number): Promise<AxiosResponse<Collection>>{
-        return BackendService.axios.get(BackendService.baseUrl + "api/collectionsForUser/"+userId);
+        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsForUser/"+userId);
     }
 
     public static UserSharedCollections(userId: number): Promise<AxiosResponse<Collection>>{
-        return BackendService.axios.get(BackendService.baseUrl + "api/collectionsSharedWithUser/"+userId);
+        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsSharedWithUser/"+userId);
+    }
+
+    public static CreateCollection(collection: Collection): Promise<Collection>{
+        return BackendService.axios.post(BackendService.baseUrl+"api/Collection", collection);
     }
 }

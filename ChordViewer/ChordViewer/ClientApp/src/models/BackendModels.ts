@@ -35,10 +35,11 @@ export interface TabBarre{
 }
 
 export interface Collection{
+    id: number;
     name: string;
     authorId: number;
     author?: User;
     isPublic: boolean;
-    tabRelations: any[];
-    userRelations: any[];
+    tabRelations?: any[];
+    userRelations?: any[];
 }

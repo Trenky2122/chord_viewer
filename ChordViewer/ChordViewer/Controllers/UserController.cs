@@ -68,7 +68,6 @@ namespace ChordViewer.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
             return Ok(user);
-            return Ok(user);
         }
 
         [HttpPost("login")]

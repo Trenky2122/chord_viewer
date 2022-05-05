@@ -3,6 +3,7 @@ using ChordViewer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ChordViewer.Controllers
 {
@@ -25,6 +26,12 @@ namespace ChordViewer.Controllers
         public async Task<ActionResult<IList<Collection>>> CollectionsSharedWithUser(int userId)
         {
             return Ok(await DbContext.CollectionUserRelations.Where(r => r.UserId == userId).Include(x => x.Collection).Select(x => x.Collection).ToListAsync());
+        }
+        
+        public async override Task<ActionResult<Collection>> Post([FromBody] Collection entity)
+        {
+            entity.AuthorId = (await DbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier))).Id;
+            return await base.Post(entity);
         }
     }
 }
