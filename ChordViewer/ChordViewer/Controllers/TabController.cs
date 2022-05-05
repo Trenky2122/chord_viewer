@@ -1,5 +1,6 @@
 ﻿using ChordViewer.Data;
 using ChordViewer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ namespace ChordViewer.Controllers
             return Ok(await _dbContext.Tabs.Where(x => x.ToneKey == toneKey).Include(x => x.TabBarre).Include(x => x.TabStrings).ToArrayAsync());
         }
 
+        [Authorize]
         [HttpPost("createTab")]
         public async Task<ActionResult<Tab>> CreateTab([FromBody] Tab tab)
         {

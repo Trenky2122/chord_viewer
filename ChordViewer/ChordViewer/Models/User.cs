@@ -10,6 +10,7 @@ namespace ChordViewer.Models
         public string UserName { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Salt { get; set; } = string.Empty;
+        public virtual List<CollectionUserRelation> TabRelations { get; set; } = new List<CollectionUserRelation>();
 
     }
 }

@@ -12,5 +12,19 @@ namespace ChordViewer.Controllers
         public CollectionController(ApplicationDbContext dbContext): base(dbContext)
         {
         }
+
+        [Authorize]
+        [HttpGet("collectionsForUser/{userId}")]
+        public async Task<ActionResult<IList<Collection>>> CollectionsForUser(int userId)
+        {
+            return Ok(await DbContext.Collections.Where(c => c.AuthorId == userId).ToArrayAsync());
+        }
+
+        [Authorize]
+        [HttpGet("collectionsSharedWithUser/{userId}")]
+        public async Task<ActionResult<IList<Collection>>> CollectionsSharedWithUser(int userId)
+        {
+            return Ok(await DbContext.CollectionUserRelations.Where(r => r.UserId == userId).Include(x => x.Collection).Select(x => x.Collection).ToListAsync());
+        }
     }
 }
