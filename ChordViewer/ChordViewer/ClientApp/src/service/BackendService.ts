@@ -21,6 +21,10 @@ export class BackendService{
         return BackendService.axios.get(BackendService.baseUrl+"api/User/me");
     }
 
+    public static GetTab(id: number): Promise<AxiosResponse<Tab>>{
+        return BackendService.axios.get(BackendService.baseUrl+"api/Tab/"+id);
+    }
+
     public static GetTabsForToneKey(toneKey: string): Promise<AxiosResponse<Tab[]>>{
         return BackendService.axios.get(BackendService.baseUrl + "api/Tab/tabsForToneKey/"+escape(toneKey));
     }
@@ -46,5 +50,9 @@ export class BackendService{
 
     public static CreateCollection(collection: Collection): Promise<Collection>{
         return BackendService.axios.post(BackendService.baseUrl+"api/Collection", collection);
+    }
+
+    public static ChangeCollectionPublicStatus(collectionId: number, publicStatus: boolean){
+        return BackendService.axios.put(BackendService.baseUrl+"api/Collection/changePublicStatus/"+collectionId+"/"+publicStatus);
     }
 }

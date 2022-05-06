@@ -22,6 +22,12 @@ namespace ChordViewer.Controllers
             return Ok(await _dbContext.Tabs.Where(x => x.ToneKey == toneKey).Include(x => x.TabBarre).Include(x => x.TabStrings).ToArrayAsync());
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Tab>> Get(int id)
+        {
+            return Ok(await _dbContext.Tabs.Include(x => x.TabBarre).Include(x => x.TabStrings).FirstOrDefaultAsync(x => x.Id == id));
+        }
+
         [Authorize]
         [HttpPost("createTab")]
         public async Task<ActionResult<Tab>> CreateTab([FromBody] Tab tab)

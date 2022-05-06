@@ -33,19 +33,19 @@ export class TabsViewer implements IMusicNotationViewer{
         }
     });
     private editorId = "editor_canvas";
-    constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number) {
+    constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number, private withEditor = true) {
         this.RepresentativeElement = document.getElementById(parentDivId) as HTMLDivElement;
         this.RepresentativeElement.innerHTML = "";
     }
 
-    View(toneKey: string): boolean {
+    View(toneKey: string, tabs?: Tab[]): boolean {
         console.log(toneKey);
         this.RepresentativeElement.innerHTML = "";
-        this.createTabContainerWithTabs(toneKey);
+        this.createTabContainerWithTabs(toneKey, tabs);
         return true;
     }
 
-    createTabContainerWithTabs(toneKey: string){
+    createTabContainerWithTabs(toneKey: string, tabs?: Tab[]){
         this.RepresentativeElement.innerHTML = "";
         let containerFluid = document.createElement("div");
         containerFluid.className = "container-fluid";
@@ -56,52 +56,55 @@ export class TabsViewer implements IMusicNotationViewer{
         let colTabs = document.createElement("div");
         colTabs.className = "col";
         mainRow.appendChild(colTabs);
-        let colEditor = document.createElement("div");
-        colEditor.className = "col";
-        mainRow.appendChild(colEditor);
-        colEditor.innerHTML="<p>Tab editor</p>"
-        let containerEditor = document.createElement("div");
-        containerEditor.className="container-fluid";
-        colEditor.appendChild(containerEditor);
-        let row1Editor = document.createElement("div");
-        row1Editor.className="row";
-        containerEditor.appendChild(row1Editor);
-        let row2Editor = document.createElement("div");
-        row2Editor.className="row";
-        containerEditor.appendChild(row2Editor);
-        let col1Editor = document.createElement("div");
-        col1Editor.className="col";
-        row1Editor.appendChild(col1Editor);
-        let col2Editor = document.createElement("div");
-        col2Editor.className="col-3";
-        row2Editor.appendChild(col2Editor);
-        let col3Editor = document.createElement("div");
-        col3Editor.className="col";
-        row2Editor.appendChild(col3Editor);
-        col1Editor.appendChild(this.createEditor());
-        let synchronizeButton=document.createElement("button");
-        synchronizeButton.type = "button";
-        synchronizeButton.innerHTML= this.localization.synchronize;
-        synchronizeButton.className ="btn btn-primary";
-        synchronizeButton.addEventListener("click", ()=>this.synchronizeWithOthers());
-        col2Editor.appendChild(synchronizeButton);
-        if(this.userId !== 0) {
-            let saveButton = document.createElement("button");
-            saveButton.type = "button";
-            saveButton.innerHTML = this.localization.save;
-            saveButton.className = "btn btn-primary";
-            saveButton.addEventListener("click", () => this.saveTab());
-            col3Editor.appendChild(saveButton);
-        }
-        else{
-            let pLoginToSave = document.createElement("p");
-            pLoginToSave.innerHTML = this.localization.loginToSave;
-            col3Editor.appendChild(pLoginToSave);
+        if(this.withEditor) {
+            let colEditor = document.createElement("div");
+            colEditor.className = "col";
+            mainRow.appendChild(colEditor);
+            colEditor.innerHTML="<p>Tab editor</p>";
+            let containerEditor = document.createElement("div");
+            containerEditor.className="container-fluid";
+            colEditor.appendChild(containerEditor);
+            let row1Editor = document.createElement("div");
+            row1Editor.className="row";
+            containerEditor.appendChild(row1Editor);
+            let row2Editor = document.createElement("div");
+            row2Editor.className="row";
+            containerEditor.appendChild(row2Editor);
+            let col1Editor = document.createElement("div");
+            col1Editor.className = "col";
+            row1Editor.appendChild(col1Editor);
+            let col2Editor = document.createElement("div");
+            col2Editor.className = "col-3";
+            row2Editor.appendChild(col2Editor);
+            let col3Editor = document.createElement("div");
+            col3Editor.className = "col";
+            row2Editor.appendChild(col3Editor);
+            col1Editor.appendChild(this.createEditor());
+            let synchronizeButton = document.createElement("button");
+            synchronizeButton.type = "button";
+            synchronizeButton.innerHTML = this.localization.synchronize;
+            synchronizeButton.className = "btn btn-primary";
+            synchronizeButton.addEventListener("click", () => this.synchronizeWithOthers());
+            col2Editor.appendChild(synchronizeButton);
+            if (this.userId !== 0) {
+                let saveButton = document.createElement("button");
+                saveButton.type = "button";
+                saveButton.innerHTML = this.localization.save;
+                saveButton.className = "btn btn-primary";
+                saveButton.addEventListener("click", () => this.saveTab());
+                col3Editor.appendChild(saveButton);
+            } else {
+                let pLoginToSave = document.createElement("p");
+                pLoginToSave.innerHTML = this.localization.loginToSave;
+                col3Editor.appendChild(pLoginToSave);
+            }
         }
         let containerTabs = document.createElement("div");
         containerTabs.className = "container-fluid";
         colTabs.appendChild(containerTabs);
         BackendService.GetTabsForToneKey(toneKey).then(res => {
+            if(tabs)
+                res.data=tabs;
             let canvases = res.data.map(t => this.createTabCanvas(t));
             canvases.forEach(canvas => {
                 let col = document.createElement("div");
