@@ -260,17 +260,11 @@ export class TabsViewer implements IMusicNotationViewer{
     }
 
     getActualToneKey(): string {
-        return this.getToneStringForTab(this.tabInEditor);
+        return Utils.GetToneStringForTab(this.tabInEditor);
     }
 
     synchronizeWithOthers(){
         this.RepresentativeElement.dispatchEvent(new CustomEvent("notesUpdated"));
-    }
-
-    getToneStringForTab(tab: Tab): string{
-        let notes: string[] = [];
-        tab.tabStrings.forEach(s => notes.push(TabsViewer.getNoteInIntervalFromBase(s.tune, s.fret)))
-        return notes.filter((n, i) => notes.indexOf(n)===i).sort().join("");
     }
 
     handleRightClick(e: MouseEvent, targetId: string){
@@ -397,10 +391,10 @@ export class TabsViewer implements IMusicNotationViewer{
         }
         this.tabInEditor.tabBarre.push({id: 0, tabId: 0, fret: this.barreStartFret!, stringEnd: end,
         stringBegin: begin, suggestedFinger: this.barreStartFinger!});
-        this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.barreStartFret = undefined;
         this.barreStartFinger = undefined;
         this.barreStartString = undefined;
+        this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
     }
 
@@ -431,8 +425,4 @@ export class TabsViewer implements IMusicNotationViewer{
         this.contextMenu.hide();
     }
 
-    private static getNoteInIntervalFromBase(baseTone: string, interval: number): string{
-        let baseNumber = Utils.toneSequence.indexOf(baseTone);
-        return Utils.toneSequence[(baseNumber + interval) % 12];
-    }
 }

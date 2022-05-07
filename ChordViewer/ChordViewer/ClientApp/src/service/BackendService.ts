@@ -40,12 +40,12 @@ export class BackendService{
         return BackendService.axios.post(BackendService.baseUrl+"api/User/createUser", params);
     }
 
-    public static UserOwnCollections(userId: number): Promise<AxiosResponse<Collection>>{
-        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsForUser/"+userId);
+    public static UserOwnCollections(): Promise<AxiosResponse<Collection>>{
+        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsForUser");
     }
 
-    public static UserSharedCollections(userId: number): Promise<AxiosResponse<Collection>>{
-        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsSharedWithUser/"+userId);
+    public static UserSharedCollections(): Promise<AxiosResponse<Collection>>{
+        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsSharedWithUser");
     }
 
     public static CreateCollection(collection: Collection): Promise<Collection>{

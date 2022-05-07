@@ -19,7 +19,7 @@ namespace ChordViewer.Controllers
             }
         }
 
-        protected const string IdClaimName = "SongbookUserId";
+        protected const string IdClaimName = "ChordViewerUserId";
         public BaseModelController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;

@@ -1,8 +1,6 @@
 import LocalizedStrings from "react-localization";
-import List from "reactstrap/lib/List";
-import {FormEvent, FormEventHandler, useContext, useEffect, useState} from "react";
+import {FormEvent, useContext, useEffect, useState} from "react";
 import {Collection} from "../../models/BackendModels";
-import ListInlineItem from "reactstrap/lib/ListInlineItem";
 import {Link} from "react-router-dom";
 import {BackendService} from "../../service/BackendService";
 import {UserContext} from "../../App";
@@ -61,8 +59,8 @@ const Profile = ()=>{
         setMessage("");
     }
     let reloadCollections = ()=>{
-        BackendService.UserOwnCollections(user.id).then(res => setMyCollections(res.data));
-        BackendService.UserSharedCollections(user.id).then(res => setSharedCollections(res.data));
+        BackendService.UserOwnCollections().then(res => setMyCollections(res.data));
+        BackendService.UserSharedCollections().then(res => setSharedCollections(res.data));
     }
     let changePublicStatus = (id: number) => {
         let index = myCollections.findIndex(x => x.id === id);

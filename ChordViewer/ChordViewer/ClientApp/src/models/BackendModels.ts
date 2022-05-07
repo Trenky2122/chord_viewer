@@ -48,6 +48,7 @@ export interface CollectionTabRelation{
     id: number;
     tabId: number;
     collectionId: number;
+    tab?: Tab;
 }
 
 export interface CollectionUserRelation{

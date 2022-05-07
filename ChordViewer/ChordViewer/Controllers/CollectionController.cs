@@ -26,23 +26,27 @@ namespace ChordViewer.Controllers
         }
 
         [Authorize]
-        [HttpGet("collectionsForUser/{userId}")]
-        public async Task<ActionResult<IList<Collection>>> CollectionsForUser(int userId)
+        [HttpGet("collectionsForUser")]
+        public async Task<ActionResult<IList<Collection>>> CollectionsForUser()
         {
-            return Ok(await DbContext.Collections.Where(c => c.AuthorId == userId).ToArrayAsync());
+            return Ok(await DbContext.Collections.Where(c => c.AuthorId == GetCurrentUserId()).ToArrayAsync());
         }
 
         [Authorize]
-        [HttpGet("collectionsSharedWithUser/{userId}")]
-        public async Task<ActionResult<IList<Collection>>> CollectionsSharedWithUser(int userId)
+        [HttpGet("collectionsSharedWithUser/")]
+        public async Task<ActionResult<IList<Collection>>> CollectionsSharedWithUser()
         {
-            return Ok(await DbContext.CollectionUserRelations.Where(r => r.UserId == userId)
+            return Ok(await DbContext.CollectionUserRelations.Where(r => r.UserId == GetCurrentUserId())
                 .Include(x => x.Collection).ThenInclude(y => y.Author).Select(x => x.Collection).ToListAsync());
         }
         
         public async override Task<ActionResult<Collection>> Post([FromBody] Collection entity)
         {
             entity.AuthorId = GetCurrentUserId();
+            if (entity.Name.Length == 0)
+                return BadRequest();
+            if (DbContext.Collections.FirstOrDefault(c => c.AuthorId == GetCurrentUserId() && entity.Name == c.Name) == null)
+                return BadRequest();
             return await base.Post(entity);
         }
 
@@ -61,9 +65,20 @@ namespace ChordViewer.Controllers
         }
 
         [HttpGet("collectionsNotContainingTab/{tabId}")]
-        public async Task<ActionResult<IList<Collection>>> GetCollectionsNotContainingTab(int tabId)
+        public async Task<ActionResult<IList<Collection>>> GetUserCollectionsNotContainingTab(int tabId)
         {
-            return Ok(await DbContext.Collections.Where(x => !DbContext.CollectionTabRelations.Any(y => y.TabId == tabId && y.CollectionId == x.Id)).ToListAsync());
+            return Ok(await DbContext.Collections.Where(x => !DbContext.CollectionTabRelations.Any(y => y.TabId == tabId && y.CollectionId == x.Id)
+            && x.AuthorId == GetCurrentUserId()).ToListAsync());
+        }
+
+        public override async Task<ActionResult<Collection>> Delete(int id)
+        {
+            var collection = DbContext.Collections.Find(id);
+            if (collection == null)
+                return NotFound();
+            if (collection.AuthorId != GetCurrentUserId())
+                return Forbid();
+            return await base.Delete(id);
         }
     }
 }
