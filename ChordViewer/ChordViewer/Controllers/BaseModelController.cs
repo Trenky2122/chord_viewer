@@ -33,7 +33,7 @@ namespace ChordViewer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async virtual Task<ActionResult<T>> GetEntity(long id)
+        public async virtual Task<ActionResult<T>> GetEntity(int id)
         {
             IQueryable<T> query = DbContext.Set<T>();
             foreach (var property in typeof(T).GetProperties())
@@ -85,7 +85,7 @@ namespace ChordViewer.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
-        public async virtual Task<ActionResult<T>> Delete(long id)
+        public async virtual Task<ActionResult<T>> Delete(int id)
         {
             var entity = DbContext.Find<T>(id);
             if (entity == null)
@@ -95,9 +95,9 @@ namespace ChordViewer.Controllers
             return Ok(entity);
         }
 
-        protected long GetCurrentUserId()
+        protected int GetCurrentUserId()
         {
-            return Convert.ToInt64(User.FindFirstValue(IdClaimName));
+            return Convert.ToInt32(User.FindFirstValue(IdClaimName));
         }
     }
 }

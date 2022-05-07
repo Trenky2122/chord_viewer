@@ -1,5 +1,6 @@
 ﻿using ChordViewer.Data;
 using ChordViewer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChordViewer.Controllers
@@ -10,6 +11,7 @@ namespace ChordViewer.Controllers
         {
         }
 
+        [Authorize]
         [HttpPost("multiple")]
         public async Task<ActionResult<IList<CollectionTabRelation>>> CreateCollectionTabRelations([FromBody] List<CollectionTabRelation> relations)
         {

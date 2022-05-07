@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {Collection, Tab, User} from "../models/BackendModels";
+import {Collection, CollectionTabRelation, Tab, User} from "../models/BackendModels";
 export class BackendService{
     private static axios = axios.create({
         withCredentials: true
@@ -52,7 +52,19 @@ export class BackendService{
         return BackendService.axios.post(BackendService.baseUrl+"api/Collection", collection);
     }
 
+    public static GetCollection(id: number){
+        return BackendService.axios.get(BackendService.baseUrl+"api/Collection/"+id);
+    }
+
     public static ChangeCollectionPublicStatus(collectionId: number, publicStatus: boolean){
         return BackendService.axios.put(BackendService.baseUrl+"api/Collection/changePublicStatus/"+collectionId+"/"+publicStatus);
+    }
+
+    public static GetCollectionsNotContainingTab(tabId: number){
+        return BackendService.axios.get(BackendService.baseUrl + "api/Collection/collectionsNotContainingTab/"+tabId);
+    }
+
+    public static CreateCollectionTabRelations(relations: CollectionTabRelation[]): Promise<CollectionTabRelation[]>{
+        return BackendService.axios.post(BackendService.baseUrl+"api/CollectionTabRelation/multiple", relations);
     }
 }

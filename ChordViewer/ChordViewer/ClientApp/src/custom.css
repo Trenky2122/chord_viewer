@@ -28,6 +28,14 @@ code {
   padding-right: 1em;
 }
 
+.selectedLi {
+  background-color: #5bAeFF;
+}
+
+.selectLi{
+  cursor: default;
+}
+
 .contextMenuItem:last-child {
   border: none;
 }

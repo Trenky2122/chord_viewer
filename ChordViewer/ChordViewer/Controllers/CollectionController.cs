@@ -15,6 +15,17 @@ namespace ChordViewer.Controllers
         }
 
         [Authorize]
+        public async override Task<ActionResult<Collection>> GetEntity(int id)
+        {
+            var collection = await DbContext.Collections.Include(x => x.TabRelations).ThenInclude(x => x.Tab)
+                .ThenInclude(x => x.TabBarre).Include(x => x.TabRelations).ThenInclude(x => x.Tab).
+                ThenInclude(x => x.TabStrings).FirstOrDefaultAsync(x => x.Id == id);
+            if(collection == null)
+                return NotFound();
+            return Ok(collection);
+        }
+
+        [Authorize]
         [HttpGet("collectionsForUser/{userId}")]
         public async Task<ActionResult<IList<Collection>>> CollectionsForUser(int userId)
         {
@@ -31,7 +42,7 @@ namespace ChordViewer.Controllers
         
         public async override Task<ActionResult<Collection>> Post([FromBody] Collection entity)
         {
-            entity.AuthorId = (await DbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier))).Id;
+            entity.AuthorId = GetCurrentUserId();
             return await base.Post(entity);
         }
 
@@ -47,6 +58,12 @@ namespace ChordViewer.Controllers
             collection.IsPublic = publicStatus == "true";
             await DbContext.SaveChangesAsync();
             return Ok(collection);
+        }
+
+        [HttpGet("collectionsNotContainingTab/{tabId}")]
+        public async Task<ActionResult<IList<Collection>>> GetCollectionsNotContainingTab(int tabId)
+        {
+            return Ok(await DbContext.Collections.Where(x => !DbContext.CollectionTabRelations.Any(y => y.TabId == tabId && y.CollectionId == x.Id)).ToListAsync());
         }
     }
 }

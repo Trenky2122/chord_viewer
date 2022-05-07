@@ -40,6 +40,18 @@ export interface Collection{
     authorId: number;
     author?: User;
     isPublic: boolean;
-    tabRelations?: any[];
-    userRelations?: any[];
+    tabRelations?: CollectionTabRelation[];
+    userRelations?: CollectionUserRelation[];
+}
+
+export interface CollectionTabRelation{
+    id: number;
+    tabId: number;
+    collectionId: number;
+}
+
+export interface CollectionUserRelation{
+    id: number;
+    userId: number;
+    collectionId: number;
 }
