@@ -22,8 +22,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.SlidingExpiration = true;
-        options.LoginPath = "/SongbookUser/login";
-        options.LogoutPath = "/SongbookUser/logout";
+        options.LoginPath = string.Empty;
+        options.AccessDeniedPath = string.Empty;
+        options.LogoutPath = string.Empty;
         options.Events.OnRedirectToLogin = context =>
         {
             context.Response.StatusCode = 401;

@@ -67,4 +67,12 @@ export class BackendService{
     public static CreateCollectionTabRelations(relations: CollectionTabRelation[]): Promise<CollectionTabRelation[]>{
         return BackendService.axios.post(BackendService.baseUrl+"api/CollectionTabRelation/multiple", relations);
     }
+
+    public static GetAllUsers(): Promise<AxiosResponse<User[]>>{
+        return BackendService.axios.get(BackendService.baseUrl+"api/User");
+    }
+
+    public static GetUsersForCollection(collectionId: number): Promise<AxiosResponse<User[]>>{
+        return BackendService.axios.get(BackendService.baseUrl+"api/Collection/"+collectionId +"/users")
+    }
 }

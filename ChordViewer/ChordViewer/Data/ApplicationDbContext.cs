@@ -14,12 +14,12 @@ namespace ChordViewer.Data
 
         }
 
-        public DbSet<Tab>? Tabs { get; set; }
-        public DbSet<TabString>? TabStrings { get; set; }
-        public DbSet<TabBarre>? TabBarre { get; set; }
-        public DbSet<Collection>? Collections { get; set; }
-        public DbSet<CollectionTabRelation>? CollectionTabRelations { get; set; }
-        public DbSet<CollectionUserRelation>? CollectionUserRelations { get; set; }
-        public DbSet<User>? Users { get; set; }
+        public DbSet<Tab> Tabs { get; set; }
+        public DbSet<TabString> TabStrings { get; set; }
+        public DbSet<TabBarre> TabBarre { get; set; }
+        public DbSet<Collection> Collections { get; set; }
+        public DbSet<CollectionTabRelation> CollectionTabRelations { get; set; }
+        public DbSet<CollectionUserRelation> CollectionUserRelations { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

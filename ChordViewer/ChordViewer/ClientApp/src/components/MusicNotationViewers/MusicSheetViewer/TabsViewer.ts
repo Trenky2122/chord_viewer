@@ -4,6 +4,7 @@ import {Tab, TabString} from "../../../models/BackendModels";
 import TabsContextMenu from "./ContextMenu/TabsContextMenu";
 import {Utils} from "../../../utils/Utils";
 import LocalizedStrings from "react-localization";
+import {useNavigate} from "react-router-dom";
 
 export class TabsViewer implements IMusicNotationViewer{
     RepresentativeElement: HTMLDivElement;
@@ -33,7 +34,8 @@ export class TabsViewer implements IMusicNotationViewer{
         }
     });
     private editorId = "editor_canvas";
-    constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number, private withEditor = true) {
+    constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number,
+                private navigate: (arg0: string)=>void, private withEditor = true) {
         this.RepresentativeElement = document.getElementById(parentDivId) as HTMLDivElement;
         this.RepresentativeElement.innerHTML = "";
     }
@@ -144,6 +146,7 @@ export class TabsViewer implements IMusicNotationViewer{
             canvas.id = tab.id.toString()+"_tab";
             isEditor = false;
             canvas.addEventListener('viewInEditor', ()=>this.setTabToEditor(tab));
+            canvas.addEventListener('addTabToCollection', ()=>this.addTabToCollection(tab));
         }
         canvas.addEventListener('contextmenu', (e: MouseEvent) => this.handleRightClick(e, canvas!.id), false);
         canvas.addEventListener('click', this.handleClick.bind(this), false);
@@ -285,7 +288,8 @@ export class TabsViewer implements IMusicNotationViewer{
             targetId===this.editorId && this.lastClickedString>0 && this.barreStartFret!==undefined,
             targetId===this.editorId &&
             this.tabInEditor.tabBarre.filter(x => x.fret===this.lastClickedFret &&
-                this.lastClickedString>=x.stringBegin && this.lastClickedString<=x.stringEnd).length>=1);
+                this.lastClickedString>=x.stringBegin && this.lastClickedString<=x.stringEnd).length>=1,
+            targetId!==this.editorId);
     }
 
     getEditorStringFromOffsetPosition(y: number){
@@ -423,6 +427,10 @@ export class TabsViewer implements IMusicNotationViewer{
         ];
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+    }
+
+    addTabToCollection(tab: Tab){
+        this.navigate("/tabToCollections/"+tab.id);
     }
 
 }

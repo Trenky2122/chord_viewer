@@ -9,8 +9,8 @@ namespace ChordViewer.Models
         [ForeignKey(nameof(AuthorId))]
         public User? Author { get; set; }
         public bool IsPublic { get; set; }
-        public virtual List<CollectionTabRelation> TabRelations { get; set; }
-        public virtual List<CollectionUserRelation> UserRelations { get; set; }
+        public virtual List<CollectionTabRelation> TabRelations { get; set; } = new List<CollectionTabRelation>();
+        public virtual List<CollectionUserRelation> UserRelations { get; set; } = new List<CollectionUserRelation>();
 
     }
 }

@@ -8,14 +8,16 @@ import {TabsViewer} from "./MusicSheetViewer/TabsViewer";
 import TabsContextMenu from "./MusicSheetViewer/ContextMenu/TabsContextMenu";
 import {User} from "../../models/BackendModels";
 import {UserContext} from "../../App";
+import {useNavigate} from "react-router-dom";
 const MusicNotationViewersContainer = ()=>{
     let [currentUser, setCurrentUser]: [User, (user: User)=>void] = useContext(UserContext);
     let [actualToneKey, setActualToneKey] = useState("CEG");
+    let navigate = useNavigate();
     let [viewers, setViewers] : [IMusicNotationViewer[], any ]= useState([]);
     useEffect(()=>{
         setViewers([]);
         let contextMenu = new TabsContextMenu("musicSheetContainer");
-        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2", contextMenu, currentUser.id),
+        let vws = [new ChordNameViewer("input1"), new TabsViewer("div2", contextMenu, currentUser.id, navigate),
             new MusicSheetViewer("canvas1", contextMenu), new KeyboardViewer("canvas2", contextMenu)];
         setViewers(vws);
         vws.forEach(viewer =>

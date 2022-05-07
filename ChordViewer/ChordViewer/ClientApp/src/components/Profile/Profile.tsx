@@ -1,9 +1,10 @@
 import LocalizedStrings from "react-localization";
 import {FormEvent, useContext, useEffect, useState} from "react";
-import {Collection} from "../../models/BackendModels";
+import {Collection, User} from "../../models/BackendModels";
 import {Link} from "react-router-dom";
 import {BackendService} from "../../service/BackendService";
 import {UserContext} from "../../App";
+import {Button, Checkbox, Dialog, DialogContent, DialogActions, DialogTitle} from "@mui/material";
 
 const Profile = ()=>{
     let localization = new LocalizedStrings({
@@ -20,7 +21,8 @@ const Profile = ()=>{
            no: "No",
            author: "Author",
            makePublic: "Make public",
-           makePrivate: "Make private"
+           makePrivate: "Make private",
+           share: "Share"
        },
        sk: {
            myCollections: "Moje kolekcie tabov",
@@ -35,7 +37,8 @@ const Profile = ()=>{
            no: "Nie",
            author: "Autor",
            makePublic: "Nastaviť ako verejnú",
-           makePrivate: "Nastaviť ako súkromnú"
+           makePrivate: "Nastaviť ako súkromnú",
+           share: "Zdieľať"
        }
     });
     let [user, setCurrentUser] = useContext(UserContext);
@@ -43,6 +46,10 @@ const Profile = ()=>{
     let [sharedCollections, setSharedCollections]: [Collection[], any] = useState([]);
     let [newCollectionName, setNewCollectionName]: [string, any] = useState("");
     let [message, setMessage]: [string, any] = useState("");
+    let [shareDialogOpen, setShareDialogOpen] = useState(false);
+    let [allUsers, setAllUsers] : [User[], any] = useState([]);
+    let [selectedCollectionUsers, setSellectedCollectionUsers]: [User[], any] = useState([]);
+
     let createCollection = (e: FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         if(newCollectionName.length === 0){
@@ -62,16 +69,15 @@ const Profile = ()=>{
         BackendService.UserOwnCollections().then(res => setMyCollections(res.data));
         BackendService.UserSharedCollections().then(res => setSharedCollections(res.data));
     }
-    let changePublicStatus = (id: number) => {
-        let index = myCollections.findIndex(x => x.id === id);
-        BackendService.ChangeCollectionPublicStatus(id, !myCollections[index].isPublic)
-            .then(res => {
-                myCollections[index] = res.data;
-                setMyCollections([...myCollections])
-            });
+    let handleSubmit = ()=>{
+        BackendService.ChangeCollectionPublicStatus(clickedCollectionId, selectedCollectionPublicStatus).then(res => reloadCollections());
+        setShareDialogOpen(false);
     }
+    let [clickedCollectionId, setCLickedCollectionId] = useState(0);
+    let [selectedCollectionPublicStatus, setSelectedCollectionPublicStatus] = useState(false);
     useEffect(()=>{
        reloadCollections();
+       BackendService.GetAllUsers().then(res => setAllUsers(res.data));
     }, [user]);
     return(
         <div className={"container-fluid"}>
@@ -109,8 +115,12 @@ const Profile = ()=>{
                                     {c.isPublic? localization.yes : localization.no}
                                 </td>
                                 <td>
-                                    <button className={"btn btn-primary"} onClick={()=>changePublicStatus(c.id)}>
-                                        {c.isPublic? localization.makePrivate : localization.makePublic}
+                                    <button className={"btn btn-primary"} onClick={()=>{
+                                        setShareDialogOpen(true);
+                                        setCLickedCollectionId(c.id);
+                                        setSelectedCollectionPublicStatus(c.isPublic);
+                                    }}>
+                                        {localization.share}
                                     </button>
                                 </td>
                             </tr>
@@ -141,6 +151,16 @@ const Profile = ()=>{
                         </tbody>
                     </table>
                 </div>
+                <Dialog open={shareDialogOpen} onClose={()=>setShareDialogOpen(false)}>
+                    <DialogTitle>{localization.share}</DialogTitle>
+                    <DialogContent>
+                        <Checkbox checked={selectedCollectionPublicStatus} onChange={event => setSelectedCollectionPublicStatus(event.target.checked)} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={()=>setShareDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleSubmit}>Subscribe</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </div>
     )

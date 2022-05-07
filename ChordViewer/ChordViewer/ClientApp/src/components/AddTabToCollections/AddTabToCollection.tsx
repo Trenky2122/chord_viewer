@@ -17,7 +17,7 @@ const AddTabToCollection = ()=>{
         }
     });
     useEffect(()=>{
-        let viewer = new TabsViewer("tabView", new TabsContextMenu("tabView"), 0,false);
+        let viewer = new TabsViewer("tabView", new TabsContextMenu("tabView"), 0, navigate,false);
         BackendService.GetTab(+tabId!).then(res => viewer.View("", [res.data]));
         BackendService.GetCollectionsNotContainingTab(+tabId!).then(res => setCollections(res.data));
     }, [tabId]);

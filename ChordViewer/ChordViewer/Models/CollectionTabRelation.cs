@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChordViewer.Models
 {
+    [Index(nameof(TabId), nameof(CollectionId), IsUnique = true)]
     public class CollectionTabRelation: BaseModel
     {
         public int CollectionId { get; set; }

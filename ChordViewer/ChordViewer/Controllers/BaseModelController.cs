@@ -99,5 +99,10 @@ namespace ChordViewer.Controllers
         {
             return Convert.ToInt32(User.FindFirstValue(IdClaimName));
         }
+
+        protected bool CurrentUserIsAdmin()
+        {
+            return User.FindFirstValue(ClaimTypes.Role) == "Administrator";
+        }
     }
 }

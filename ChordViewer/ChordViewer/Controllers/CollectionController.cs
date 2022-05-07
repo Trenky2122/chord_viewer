@@ -14,7 +14,6 @@ namespace ChordViewer.Controllers
         {
         }
 
-        [Authorize]
         public async override Task<ActionResult<Collection>> GetEntity(int id)
         {
             var collection = await DbContext.Collections.Include(x => x.TabRelations).ThenInclude(x => x.Tab)
@@ -22,6 +21,9 @@ namespace ChordViewer.Controllers
                 ThenInclude(x => x.TabStrings).FirstOrDefaultAsync(x => x.Id == id);
             if(collection == null)
                 return NotFound();
+            if(!collection.IsPublic && collection.AuthorId != GetCurrentUserId() && !CurrentUserIsAdmin() 
+                && !DbContext.CollectionUserRelations.Any(x => x.CollectionId == id && x.UserId == GetCurrentUserId()))
+                return StatusCode(StatusCodes.Status403Forbidden); 
             return Ok(collection);
         }
 
@@ -58,7 +60,7 @@ namespace ChordViewer.Controllers
             if (collection == null)
                 return NotFound();
             if(collection.AuthorId != (await DbContext.Users.FirstAsync(x => x.UserName == User.FindFirstValue(ClaimTypes.NameIdentifier))).Id)
-                return Forbid();
+                return StatusCode(StatusCodes.Status403Forbidden);
             collection.IsPublic = publicStatus == "true";
             await DbContext.SaveChangesAsync();
             return Ok(collection);
@@ -77,8 +79,31 @@ namespace ChordViewer.Controllers
             if (collection == null)
                 return NotFound();
             if (collection.AuthorId != GetCurrentUserId())
-                return Forbid();
+                return StatusCode(StatusCodes.Status403Forbidden);
             return await base.Delete(id);
+        }
+
+        [HttpGet("{collectionId}/users")]
+        public async Task<ActionResult<IList<User>>> GetUsersForCollection(int collectionId)
+        {
+            return Ok(await DbContext.CollectionUserRelations.Include(x => x.User)
+                .Where(x => x.CollectionId == collectionId).Select(x => x.User).ToListAsync());
+        }
+
+        [HttpPut("{collectionId}/users")]
+        public async Task<ActionResult> Put(int collectionId, List<int> userIds)
+        {
+            var relationsToDelete = DbContext.CollectionUserRelations.Where(x => x.CollectionId==collectionId && !userIds.Contains(x.UserId));
+            DbContext.CollectionUserRelations.RemoveRange(relationsToDelete);
+            var relationsToAdd = userIds.Where(y => !DbContext.CollectionUserRelations.Any(x => x.CollectionId == collectionId && x.UserId == y))
+                .Select(x => new CollectionUserRelation()
+                {
+                    CollectionId = collectionId,
+                    UserId = x
+                });
+            await DbContext.AddAsync(relationsToAdd);
+            await DbContext.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

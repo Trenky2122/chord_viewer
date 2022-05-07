@@ -6,7 +6,7 @@ class TabsContextMenu extends ContextMenu{
     public viewTab(x:number, y:number, parent: string, viewInEditor: boolean, moveFingerHere: boolean, removeThisString: boolean,
                    addLowerFretToView: boolean, addHigherFretToView: boolean, addString: boolean, removeString: boolean,
                    changeStringTune: string | undefined, resetEditor: boolean, startBarreHere: boolean, stopBarre: boolean,
-                   removeBarre: boolean){
+                   removeBarre: boolean, addTabToCollection: boolean){
         this.currentX = x;
         this.currentY = y;
         let localization = new LocalizedStrings({
@@ -23,7 +23,8 @@ class TabsContextMenu extends ContextMenu{
                 startBarreHere: "Start barré here",
                 stopBarreHere: "Finish barré here",
                 removeBarre: "Remove barré",
-                resetEditorStandard: "Reset editor to standard tuning"
+                resetEditorStandard: "Reset editor to standard tuning",
+                addTabToCollection: "Add tab to collection"
             },
             sk: {
                 viewInEditor: "Zobraziť v editore",
@@ -38,7 +39,8 @@ class TabsContextMenu extends ContextMenu{
                 startBarreHere: "Začať barré tu",
                 stopBarreHere: "Ukončiť barré tu",
                 removeBarre: "Odstrániť barré",
-                resetEditorStandard: "Resetovať editor do základného ladenia"
+                resetEditorStandard: "Resetovať editor do základného ladenia",
+                addTabToCollection: "Pridať tab do kolekcie"
             }
         })
         let list = "<ul class='contextMenu'>";
@@ -70,6 +72,8 @@ class TabsContextMenu extends ContextMenu{
             list+=this.createListItem(parent, "resetEditorButton", "resetEditor", localization.resetEditor);
         if(resetEditor)
             list+=this.createListItem(parent, "resetEditorStandardButton", "resetEditorStandard", localization.resetEditorStandard);
+        if(addTabToCollection)
+            list+=this.createListItem(parent, "addTabToCollectionButton", "addTabToCollection", localization.addTabToCollection);
         list+="</ul>";
         this.el.innerHTML = list;
         this.show(x, y);

@@ -42,7 +42,7 @@ namespace ChordViewer.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Role, user.IsAdmin ? "Administrator" : "BasicUser"),
-                new Claim("ChordViewerUserId", user.Id.ToString())
+                new Claim(IdClaimName, user.Id.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(
