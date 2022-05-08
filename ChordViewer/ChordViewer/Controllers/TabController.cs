@@ -42,11 +42,15 @@ namespace ChordViewer.Controllers
                     {
                         if (str.Id != 0)
                             return BadRequest();
+                        if (str.Fret == 0)
+                            str.SuggestedFinger = 0;
                     }
                     //check if any order of string is contained twice
                     if (tab.TabStrings.DistinctBy(x => x.StringOrder).Count() != tab.TabStrings.Count)
                         return BadRequest();
                 }
+                if (TabLikeThisExists(tab))
+                    return Ok(tab);
 
                 if (tab.TabBarre != null)
                 {
@@ -67,6 +71,48 @@ namespace ChordViewer.Controllers
             {
                 throw;
             }
+        }
+
+        private bool TabLikeThisExists(Tab tab)
+        {
+            var sameChordTabs = _dbContext.Tabs.Include(x => x.TabBarre).Include(x => x.TabStrings).Where(x => x.ToneKey == tab.ToneKey).ToList();
+            var tabsWithEqualBarre = sameChordTabs.Where(x =>
+            {
+                foreach (var barre in x.TabBarre)
+                {
+                    if (!tab.TabBarre.Any(b => b.Fret == barre.Fret && b.StringBegin == barre.StringBegin && b.StringEnd == barre.StringEnd && b.SuggestedFinger == barre.SuggestedFinger))
+                    {
+                        return false;
+                    }
+                }
+                foreach (var barre in tab.TabBarre)
+                {
+                    if (!x.TabBarre.Any(b => b.Fret == barre.Fret && b.StringBegin == barre.StringBegin && b.StringEnd == barre.StringEnd && b.SuggestedFinger == barre.SuggestedFinger))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            var tabsWithEqualStrings = tabsWithEqualBarre.Where(x =>
+            {
+                foreach (var barre in x.TabStrings)
+                {
+                    if (!tab.TabStrings.Any(b => b.Fret == barre.Fret && b.Tune == barre.Tune && b.StringOrder == barre.StringOrder && b.SuggestedFinger == barre.SuggestedFinger))
+                    {
+                        return false;
+                    }
+                }
+                foreach (var barre in tab.TabStrings)
+                {
+                    if (!x.TabStrings.Any(b => b.Fret == barre.Fret && b.Tune == barre.Tune && b.StringOrder == barre.StringOrder && b.SuggestedFinger == barre.SuggestedFinger))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return tabsWithEqualStrings.Any();
         }
 
     }

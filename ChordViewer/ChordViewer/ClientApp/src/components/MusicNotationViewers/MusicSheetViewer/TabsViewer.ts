@@ -76,19 +76,10 @@ export class TabsViewer implements IMusicNotationViewer{
             let col1Editor = document.createElement("div");
             col1Editor.className = "col";
             row1Editor.appendChild(col1Editor);
-            let col2Editor = document.createElement("div");
-            col2Editor.className = "col-3";
-            row2Editor.appendChild(col2Editor);
             let col3Editor = document.createElement("div");
             col3Editor.className = "col";
             row2Editor.appendChild(col3Editor);
             col1Editor.appendChild(this.createEditor());
-            let synchronizeButton = document.createElement("button");
-            synchronizeButton.type = "button";
-            synchronizeButton.innerHTML = this.localization.synchronize;
-            synchronizeButton.className = "btn btn-primary";
-            synchronizeButton.addEventListener("click", () => this.synchronizeWithOthers());
-            col2Editor.appendChild(synchronizeButton);
             if (this.userId !== 0) {
                 let saveButton = document.createElement("button");
                 saveButton.type = "button";
@@ -326,12 +317,14 @@ export class TabsViewer implements IMusicNotationViewer{
         this.tabInEditor.stringCount+=1;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     removeString(){
         this.tabInEditor.stringCount-=1;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     addHigherFret(){
@@ -353,6 +346,7 @@ export class TabsViewer implements IMusicNotationViewer{
         this.editorMaxfret = 0;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     changeStringTune(tune: string){
@@ -365,6 +359,7 @@ export class TabsViewer implements IMusicNotationViewer{
         string.tune = tune;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     moveFingerHere(finger: number){
@@ -378,12 +373,14 @@ export class TabsViewer implements IMusicNotationViewer{
         string.suggestedFinger = finger;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     removeLastClickedString(){
         this.tabInEditor.tabStrings = this.tabInEditor.tabStrings.filter(x => x.stringOrder !== this.lastClickedString);
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     startBarreHere(finger: number){
@@ -415,6 +412,7 @@ export class TabsViewer implements IMusicNotationViewer{
         this.barreStartString = undefined;
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     removeBarre(){
@@ -422,6 +420,7 @@ export class TabsViewer implements IMusicNotationViewer{
             this.lastClickedString>=x.stringBegin && this.lastClickedString<=x.stringEnd));
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     saveTab(){
@@ -446,6 +445,7 @@ export class TabsViewer implements IMusicNotationViewer{
         ];
         this.redrawTabOnCanvas(this.editorContext!, this.tabInEditor, true);
         this.contextMenu.hide();
+        this.synchronizeWithOthers();
     }
 
     addTabToCollection(tab: Tab){

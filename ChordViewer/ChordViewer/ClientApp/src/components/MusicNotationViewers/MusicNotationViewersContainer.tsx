@@ -11,6 +11,9 @@ import {UserContext} from "../../App";
 import {useNavigate} from "react-router-dom";
 import {Alert, Snackbar} from "@mui/material";
 import {SnackbarStatus} from "../../models/LocalModels";
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import * as Tone from 'tone';
+import {Utils} from "../../utils/Utils";
 const MusicNotationViewersContainer = ()=>{
     let [currentUser, ]: [User, (user: User)=>void] = useContext(UserContext);
     let [actualToneKey, setActualToneKey] = useState("CEG");
@@ -26,11 +29,12 @@ const MusicNotationViewersContainer = ()=>{
         setViewers(vws);
         vws.forEach(viewer =>
             {
-                viewer.RepresentativeElement?.addEventListener("notesUpdated", (e)=>
+                viewer.RepresentativeElement?.addEventListener("notesUpdated", async (e)=>
                 {
                     let newToneKey = viewer.getActualToneKey();
                     console.log(e, newToneKey);
-                    setActualToneKey(newToneKey);
+                    await setActualToneKey(newToneKey);
+                    playToneKey();
                 });
             }
         );
@@ -56,10 +60,23 @@ const MusicNotationViewersContainer = ()=>{
             error: "Nastala chyba."
         }
     });
+    let playToneKey = ()=>{
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        let currentNotes = Utils.GetNotesFromToneKey(actualToneKey);
+        let chord: [string, number][] = currentNotes.map(tone => [tone.toLowerCase() , "ab".indexOf(tone.substring(0, 1).toLowerCase())!==-1?3:4]);
+        synth.triggerAttackRelease(chord.map(c => c[0].toUpperCase()+c[1]), "4n");
+    }
     return (
         <div className={"container-fluid"} id={"musicSheetContainer"}>
             <div className={"row"}>
-                <label className={"me-1"} htmlFor={"input1"}>{localization.chord_name}</label>
+                <div className={"col-6"}>
+                    <label className={"me-1"} htmlFor={"input1"} style={{fontWeight: "bold"}}>{localization.chord_name}</label>
+                </div>
+                <div className={"col-6"}>
+                    <button onClick={()=>playToneKey()} className={"btn btn-primary"}>
+                        <PlayArrowIcon></PlayArrowIcon>
+                    </button>
+                </div>
             </div>
             <div className={"row"}>
                 <div className={"col"} id={"div1"}>
@@ -67,20 +84,18 @@ const MusicNotationViewersContainer = ()=>{
                 </div>
             </div>
             <div className={"row"}>
-                <div className={"col"}>
-                    <p>{localization.tones}</p>
+                <div className={"col-lg-6 col-12"}>
+                    <p style={{fontWeight: "bold"}}>{localization.tones}</p>
                     <canvas id={"canvas1"} width={420} height={200} />
                 </div>
-            </div>
-            <div className={"row"}>
-                <div className={"col"}>
-                    <p>{localization.piano}</p>
+                <div className={"col-lg-6 col-12"}>
+                    <p style={{fontWeight: "bold"}}>{localization.piano}</p>
                     <canvas id={"canvas2"} width={420} height={100} />
                 </div>
             </div>
             <div className={"row"}>
                 <div className={"col"}>
-                    <p>{localization.tabs}</p>
+                    <p style={{fontWeight: "bold"}}>{localization.tabs}</p>
                     <div id={"div2"} />
                 </div>
             </div>
