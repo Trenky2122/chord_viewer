@@ -36,7 +36,10 @@ const Collection = ()=>{
     }, [collectionId])
     useEffect(()=>{
         collection.tabRelations!.forEach(rel => {
-            let viewer = new TabsViewer("tab"+rel.tabId, new TabsContextMenu("wrapper"), 0, navigate, false);
+            let viewer = new TabsViewer("tab"+rel.tabId, new TabsContextMenu("wrapper"),
+                0, navigate, false, ()=> {
+                    return;
+                });
             viewer.View("", [rel.tab!]);
         });
     }, [collection]);

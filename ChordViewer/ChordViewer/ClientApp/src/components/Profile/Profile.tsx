@@ -4,7 +4,17 @@ import {Collection, User} from "../../models/BackendModels";
 import {Link} from "react-router-dom";
 import {BackendService} from "../../service/BackendService";
 import {UserContext} from "../../App";
-import {Button, Checkbox, Dialog, DialogContent, DialogActions, DialogTitle} from "@mui/material";
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    DialogContent,
+    DialogActions,
+    DialogTitle,
+    FormControlLabel,
+    Snackbar, Alert
+} from "@mui/material";
+import {SnackbarStatus} from "../../models/LocalModels";
 
 const Profile = ()=>{
     let localization = new LocalizedStrings({
@@ -22,7 +32,12 @@ const Profile = ()=>{
            author: "Author",
            makePublic: "Make public",
            makePrivate: "Make private",
-           share: "Share"
+           share: "Share",
+           selectUsers: "Select users that can access this collection.",
+           save: "Save",
+           cancel: "Cancel",
+           success: "Sucessfully saved.",
+           error: "Something went wrong."
        },
        sk: {
            myCollections: "Moje kolekcie tabov",
@@ -38,7 +53,12 @@ const Profile = ()=>{
            author: "Autor",
            makePublic: "Nastaviť ako verejnú",
            makePrivate: "Nastaviť ako súkromnú",
-           share: "Zdieľať"
+           share: "Zdieľať",
+           selectUsers: "Zvoľte používateľov, pre ktorých bude táto kolekcia prístupná.",
+           save: "Uložiť",
+           cancel: "Zrušiť",
+           success: "Úspešne uložené.",
+           error: "Nasatala chyba."
        }
     });
     let [user, setCurrentUser] = useContext(UserContext);
@@ -47,6 +67,7 @@ const Profile = ()=>{
     let [newCollectionName, setNewCollectionName]: [string, any] = useState("");
     let [message, setMessage]: [string, any] = useState("");
     let [shareDialogOpen, setShareDialogOpen] = useState(false);
+    let [snackbarOpen, setSnackbarOpen] = useState(SnackbarStatus.Hidden);
     let [allUsers, setAllUsers] : [User[], any] = useState([]);
     let [selectedCollectionUsers, setSellectedCollectionUsers]: [User[], any] = useState([]);
 
@@ -61,23 +82,49 @@ const Profile = ()=>{
             return false;
         }
         BackendService.CreateCollection({id: 0, name: newCollectionName, isPublic: false, authorId: user.id})
-            .then(res => reloadCollections());
+            .then(res => {
+                reloadCollections();
+                setSnackbarOpen(SnackbarStatus.Success);
+            }).catch(()=>{
+                setSnackbarOpen(SnackbarStatus.Error);
+        });
         setNewCollectionName("");
         setMessage("");
     }
+
+    let openShareDialog = (c: Collection) => {
+        BackendService.GetUsersForCollection(c.id).then(res => setSellectedCollectionUsers(res.data));
+        setShareDialogOpen(true);
+        setSelectedCollectionId(c.id);
+        setSelectedCollectionPublicStatus(c.isPublic);
+    }
+
     let reloadCollections = ()=>{
         BackendService.UserOwnCollections().then(res => setMyCollections(res.data));
         BackendService.UserSharedCollections().then(res => setSharedCollections(res.data));
     }
     let handleSubmit = ()=>{
-        BackendService.ChangeCollectionPublicStatus(clickedCollectionId, selectedCollectionPublicStatus).then(res => reloadCollections());
+        console.log(selectedCollectionUsers);
+        BackendService.ChangeCollectionPublicStatus(selectedCollectionId, selectedCollectionPublicStatus).then(res => reloadCollections());
+        BackendService.SetUsersForCollection(selectedCollectionId, selectedCollectionUsers.map(x => x.id))
+            .then(()=>setSnackbarOpen(SnackbarStatus.Success)).catch(()=>setSnackbarOpen(SnackbarStatus.Error));
         setShareDialogOpen(false);
     }
-    let [clickedCollectionId, setCLickedCollectionId] = useState(0);
+    let toggleUser = (user: User)=>{
+        let index = selectedCollectionUsers.findIndex(u => u.id === user.id);
+        if(index === -1){
+            setSellectedCollectionUsers([...selectedCollectionUsers, user]);
+        }
+        else {
+            selectedCollectionUsers.splice(index, 1);
+            setSellectedCollectionUsers([...selectedCollectionUsers]);
+        }
+    }
+    let [selectedCollectionId, setSelectedCollectionId] = useState(0);
     let [selectedCollectionPublicStatus, setSelectedCollectionPublicStatus] = useState(false);
     useEffect(()=>{
        reloadCollections();
-       BackendService.GetAllUsers().then(res => setAllUsers(res.data));
+       BackendService.GetAllUsers().then(res => setAllUsers(res.data.filter(x => x.id !== user.id)));
     }, [user]);
     return(
         <div className={"container-fluid"}>
@@ -116,9 +163,7 @@ const Profile = ()=>{
                                 </td>
                                 <td>
                                     <button className={"btn btn-primary"} onClick={()=>{
-                                        setShareDialogOpen(true);
-                                        setCLickedCollectionId(c.id);
-                                        setSelectedCollectionPublicStatus(c.isPublic);
+                                        openShareDialog(c);
                                     }}>
                                         {localization.share}
                                     </button>
@@ -151,17 +196,34 @@ const Profile = ()=>{
                         </tbody>
                     </table>
                 </div>
-                <Dialog open={shareDialogOpen} onClose={()=>setShareDialogOpen(false)}>
-                    <DialogTitle>{localization.share}</DialogTitle>
-                    <DialogContent>
-                        <Checkbox checked={selectedCollectionPublicStatus} onChange={event => setSelectedCollectionPublicStatus(event.target.checked)} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={()=>setShareDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleSubmit}>Subscribe</Button>
-                    </DialogActions>
-                </Dialog>
             </div>
+            <Dialog open={shareDialogOpen} onClose={()=>setShareDialogOpen(false)}>
+                <DialogTitle>{localization.share}</DialogTitle>
+                <DialogContent>
+                    <FormControlLabel
+                        control={<Checkbox checked={selectedCollectionPublicStatus}
+                                           onChange={event => setSelectedCollectionPublicStatus(event.target.checked)}
+                        />} label={localization.public} />
+                    <h3>{localization.selectUsers}</h3>
+                    {allUsers.map(u => (<FormControlLabel
+                        control={<Checkbox checked={selectedCollectionUsers.findIndex(su => su.id === u.id)!==-1}
+                                           onChange={()=>toggleUser(u)}
+                        />} label={u.userName} />))}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={()=>setShareDialogOpen(false)}>{localization.cancel}</Button>
+                    <Button onClick={handleSubmit}>{localization.save}</Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar open={snackbarOpen !== SnackbarStatus.Hidden} autoHideDuration={3000} onClose={()=>setSnackbarOpen(SnackbarStatus.Hidden)}>
+                {(snackbarOpen === SnackbarStatus.Success) ?
+                    (<Alert severity="success" sx={{ width: '100%' }}>
+                        {localization.success}
+                    </Alert>):( snackbarOpen === SnackbarStatus.Error ?
+                    (<Alert severity="error" sx={{ width: '100%' }}>
+                        {localization.error}
+                    </Alert>): (<div />))}
+            </Snackbar>
         </div>
     )
 }

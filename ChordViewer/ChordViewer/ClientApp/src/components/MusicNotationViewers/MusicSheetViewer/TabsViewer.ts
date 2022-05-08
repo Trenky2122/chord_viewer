@@ -4,7 +4,7 @@ import {Tab, TabString} from "../../../models/BackendModels";
 import TabsContextMenu from "./ContextMenu/TabsContextMenu";
 import {Utils} from "../../../utils/Utils";
 import LocalizedStrings from "react-localization";
-import {useNavigate} from "react-router-dom";
+import {SnackbarStatus} from "../../../models/LocalModels";
 
 export class TabsViewer implements IMusicNotationViewer{
     RepresentativeElement: HTMLDivElement;
@@ -35,7 +35,8 @@ export class TabsViewer implements IMusicNotationViewer{
     });
     private editorId = "editor_canvas";
     constructor(private parentDivId: string, private contextMenu: TabsContextMenu, private userId: number,
-                private navigate: (arg0: string)=>void, private withEditor = true) {
+                private navigate: (arg0: string)=>void, private withEditor: boolean,
+                private snackbarSet: (status: SnackbarStatus)=>void) {
         this.RepresentativeElement = document.getElementById(parentDivId) as HTMLDivElement;
         this.RepresentativeElement.innerHTML = "";
     }
@@ -104,10 +105,8 @@ export class TabsViewer implements IMusicNotationViewer{
         let containerTabs = document.createElement("div");
         containerTabs.className = "container-fluid";
         colTabs.appendChild(containerTabs);
-        BackendService.GetTabsForToneKey(toneKey).then(res => {
-            if(tabs)
-                res.data=tabs;
-            let canvases = res.data.map(t => this.createTabCanvas(t));
+        if(tabs){
+            let canvases = tabs.map(t => this.createTabCanvas(t));
             canvases.forEach(canvas => {
                 let col = document.createElement("div");
                 col.className = "col";
@@ -117,7 +116,23 @@ export class TabsViewer implements IMusicNotationViewer{
                 row.appendChild(col);
                 containerTabs.appendChild(row);
             });
-        });
+        }
+        else {
+            BackendService.GetTabsForToneKey(toneKey).then(res => {
+                if(res.status === 200) {
+                    let canvases = res.data.map(t => this.createTabCanvas(t));
+                    canvases.forEach(canvas => {
+                        let col = document.createElement("div");
+                        col.className = "col";
+                        col.appendChild(canvas);
+                        let row = document.createElement("div");
+                        row.className = "row";
+                        row.appendChild(col);
+                        containerTabs.appendChild(row);
+                    });
+                }
+            });
+        }
     }
 
     createEditor(): HTMLCanvasElement{
@@ -412,7 +427,11 @@ export class TabsViewer implements IMusicNotationViewer{
     saveTab(){
         this.tabInEditor.toneKey = this.getActualToneKey();
         this.tabInEditor.authorId = this.userId;
-        BackendService.SaveTab(this.tabInEditor).then(()=>this.synchronizeWithOthers());
+        BackendService.SaveTab(this.tabInEditor).then(()=>{
+            this.synchronizeWithOthers();
+            this.snackbarSet(SnackbarStatus.Success);
+        }).catch(()=>this.snackbarSet(SnackbarStatus.Error));
+        console.log(this.tabInEditor);
     }
 
     resetToStandard(){

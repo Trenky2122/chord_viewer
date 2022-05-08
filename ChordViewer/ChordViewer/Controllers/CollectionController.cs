@@ -47,7 +47,7 @@ namespace ChordViewer.Controllers
             entity.AuthorId = GetCurrentUserId();
             if (entity.Name.Length == 0)
                 return BadRequest();
-            if (DbContext.Collections.FirstOrDefault(c => c.AuthorId == GetCurrentUserId() && entity.Name == c.Name) == null)
+            if (DbContext.Collections.Any(c => c.AuthorId == GetCurrentUserId() && entity.Name == c.Name))
                 return BadRequest();
             return await base.Post(entity);
         }
@@ -91,7 +91,7 @@ namespace ChordViewer.Controllers
         }
 
         [HttpPut("{collectionId}/users")]
-        public async Task<ActionResult> Put(int collectionId, List<int> userIds)
+        public async Task<ActionResult> Put(int collectionId, [FromBody]List<int> userIds)
         {
             var relationsToDelete = DbContext.CollectionUserRelations.Where(x => x.CollectionId==collectionId && !userIds.Contains(x.UserId));
             DbContext.CollectionUserRelations.RemoveRange(relationsToDelete);
@@ -101,7 +101,7 @@ namespace ChordViewer.Controllers
                     CollectionId = collectionId,
                     UserId = x
                 });
-            await DbContext.AddAsync(relationsToAdd);
+            await DbContext.AddRangeAsync(relationsToAdd);
             await DbContext.SaveChangesAsync();
             return NoContent();
         }

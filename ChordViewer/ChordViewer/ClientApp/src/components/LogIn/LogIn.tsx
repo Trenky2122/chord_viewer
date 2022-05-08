@@ -8,11 +8,13 @@ import {Button} from "reactstrap";
 
 const LogIn = ()=>{
     let navigate = useNavigate();
+    let [currentUser, setCurrentUser] = useContext(UserContext);
+    if(currentUser.id !== 0)
+        navigate("/");
     const handleSubmit = (e: any) => {
         e.preventDefault();
         BackendService.LogIn(username, password).then((res)=> {
             setCurrentUser(res.data);
-            navigate("/");
         }).catch((err: AxiosError)=> {
             if(err.response!.status === 401){
                 setMessage(localization.submitFailed);
@@ -38,9 +40,6 @@ const LogIn = ()=>{
             forgotPassword: "Zabudnuté heslo"
         }
     });
-    let [currentUser, setCurrentUser] = useContext(UserContext);
-    if(currentUser.id !== 0)
-        navigate("/");
     const [username, setUsername]: [string, any] = useState("");
     const [password, setPassword]: [string, any] = useState("");
     return (

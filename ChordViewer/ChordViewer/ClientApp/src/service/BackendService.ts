@@ -75,4 +75,8 @@ export class BackendService{
     public static GetUsersForCollection(collectionId: number): Promise<AxiosResponse<User[]>>{
         return BackendService.axios.get(BackendService.baseUrl+"api/Collection/"+collectionId +"/users")
     }
+
+    public static SetUsersForCollection(collectionId: number, userIds: number[]): Promise<AxiosResponse>{
+        return BackendService.axios.put(BackendService.baseUrl+"api/Collection/"+collectionId +"/users", userIds)
+    }
 }

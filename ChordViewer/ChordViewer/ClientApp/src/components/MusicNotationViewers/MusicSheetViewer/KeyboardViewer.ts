@@ -97,7 +97,8 @@ export class KeyboardViewer implements IMusicNotationViewer{
     }
 
     getActualToneKey(): string {
-        return this.currentNotes.sort().join("");
+        return this.currentNotes.filter((n, i)=> this.currentNotes.indexOf(n)===i)
+            .sort().join("");
     }
 
 }
