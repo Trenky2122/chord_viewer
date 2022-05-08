@@ -33,12 +33,11 @@ const MusicNotationViewersContainer = ()=>{
                 {
                     let newToneKey = viewer.getActualToneKey();
                     console.log(e, newToneKey);
-                    await setActualToneKey(newToneKey);
-                    playToneKey();
+                    setActualToneKey(newToneKey);
                 });
             }
         );
-    }, [navigate, setSnackbarOpen, currentUser.id]);
+    }, [navigate, setSnackbarOpen]);
     useEffect(()=>{
         viewers.forEach(viewer=>viewer.View(actualToneKey));
     }, [actualToneKey, viewers])
