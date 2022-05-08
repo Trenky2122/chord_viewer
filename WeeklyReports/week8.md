@@ -13,18 +13,18 @@
 
 ### Splnené ciele
 
-1. Kolekcie - tvorba a napĺňanie - implementované
-2. Sign up stránka
-3. Prehrávač midi - implementované
-4. Upraviť rozloženie pre dobré používanie - implementované 
-5. Vylepšiť dizajn pre finálnu verziu - implementované
-6. Úprava kódu pred finálnou verziou - implementované
+1. Kolekcie - tvorba a napĺňanie - implementované - fb647c714db221c20bab0b9d277d852d4981f845, ff5f7e500b63779780ed99877d67f63703d7710d, bd5126f7ae5381b913073961cd547c519a6e9221, 5b88ab213adae567648343a9889e59d37021c19f
+2. Sign up stránka -82f8dd6a0c7c3638ed1e2f294ad044547fe7a6f0, 4b226fafd0a032df284dfd4988cd304524c1fa63
+3. Prehrávač midi - implementované - 9b96d4027646303654e7ef91cc1b9d3f6c1c499d
+4. Upraviť rozloženie pre dobré používanie - implementované - 9b96d4027646303654e7ef91cc1b9d3f6c1c499d
+5. Vylepšiť dizajn pre finálnu verziu - implementované - 9b96d4027646303654e7ef91cc1b9d3f6c1c499d
+6. Úprava kódu pred finálnou verziou - implementované - 3649a99720961daf5d11c06f87ed1c3d1f2e9dd0
 
 ### Zdôvodnenie rozdielov oproti pôvodnému plánu
 
 Pri tvorbe minulotýždňového reportu som zabudol, že nemám hotovú Sign up page.
 
-Projektu bolo dovedna venovaných 52 hodín čistého času.
+Projektu bolo dovedna venovaných 52 hodín čistého času. Pôvodný odhad som nemal.
 
 ### Riešené problémy
 
@@ -41,6 +41,11 @@ Problém so samoprepisovaním pri použití context dependency v useEffect.
 ### Najväčšie problémy
 
 Najväčšie problémy som mal pri prvých deploymentoch, trvalo mi to veľmi dlho a stále to nefunguje podľa mojich predstáv. Tiež som póvodne dúfal, že sa mi podarí vytvoriť viac okulahodiaci dizajn. Taktiež som dlho riešil problémy s Microsoft Identity Frameworkom, čo vyústilo do toho, že som prepisoval časť kódu tak, aby ho nepoužíval.
+
+### Na čo som hrdý
+
+Som spokojný s tým, že prevodník medzi všetkými hudobnými notáciami mi funguje dosť spoľahlivo.
+Celkovo som spokojný so stavom, nemyslím, že bolo v mojej kapacite urobiť viac.
 
 ### Čo by som urobil inak
 
