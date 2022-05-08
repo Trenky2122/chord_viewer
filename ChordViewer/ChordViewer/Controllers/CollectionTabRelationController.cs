@@ -28,5 +28,20 @@ namespace ChordViewer.Controllers
             await Task.WhenAll(tasks);
             return Ok(tasks);
         }
+
+        [Authorize]
+        [HttpDelete("collection/{collectionId}/tab/{tabId}")]
+        public async Task<ActionResult<CollectionTabRelation>> DeleteCollectionTabRelation(int collectionId, int tabId)
+        {
+            var collection = await DbContext.Collections.FindAsync(collectionId);
+            if(collection == null)
+                return NotFound();
+            if (collection.AuthorId != GetCurrentUserId() && !CurrentUserIsAdmin())
+                return StatusCode(403);
+            var relations = DbContext.CollectionTabRelations.Where(x => x.CollectionId == collectionId && x.TabId == tabId);
+            DbContext.CollectionTabRelations.RemoveRange(relations);
+            await DbContext.SaveChangesAsync();
+            return Ok(relations.FirstOrDefault());
+        }
     }
 }

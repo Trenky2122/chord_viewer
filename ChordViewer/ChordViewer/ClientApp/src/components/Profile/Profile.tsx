@@ -4,6 +4,8 @@ import {Collection, User} from "../../models/BackendModels";
 import {Link} from "react-router-dom";
 import {BackendService} from "../../service/BackendService";
 import {UserContext} from "../../App";
+import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
     Button,
     Checkbox,
@@ -37,7 +39,8 @@ const Profile = ()=>{
            save: "Save",
            cancel: "Cancel",
            success: "Sucessfully saved.",
-           error: "Something went wrong."
+           error: "Something went wrong.",
+           checkDelete: "Are you sure you want to delete this collection: "
        },
        sk: {
            myCollections: "Moje kolekcie tabov",
@@ -58,7 +61,8 @@ const Profile = ()=>{
            save: "Uložiť",
            cancel: "Zrušiť",
            success: "Úspešne uložené.",
-           error: "Nasatala chyba."
+           error: "Nasatala chyba.",
+           checkDelete: "Naozaj chcete odstrániť túto kolekciu: "
        }
     });
     let [user, setCurrentUser] = useContext(UserContext);
@@ -120,6 +124,14 @@ const Profile = ()=>{
             setSellectedCollectionUsers([...selectedCollectionUsers]);
         }
     }
+
+    let handleDeleteCollection = (c: Collection)=>{
+        // eslint-disable-next-line no-restricted-globals
+        if(confirm(localization.checkDelete+c.name+"?")){
+            BackendService.DeleteCollection(c.id).then(res => reloadCollections());
+        }
+    }
+
     let [selectedCollectionId, setSelectedCollectionId] = useState(0);
     let [selectedCollectionPublicStatus, setSelectedCollectionPublicStatus] = useState(false);
     useEffect(()=>{
@@ -150,6 +162,7 @@ const Profile = ()=>{
                             <th>{localization.name}</th>
                             <th>{localization.public}</th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -165,7 +178,12 @@ const Profile = ()=>{
                                     <button className={"btn btn-primary"} onClick={()=>{
                                         openShareDialog(c);
                                     }}>
-                                        {localization.share}
+                                        <ShareIcon />
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onClick={()=>handleDeleteCollection(c)} className={"btn btn-danger"}>
+                                        <DeleteIcon />
                                     </button>
                                 </td>
                             </tr>

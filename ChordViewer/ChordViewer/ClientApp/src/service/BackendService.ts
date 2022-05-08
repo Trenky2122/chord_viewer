@@ -79,4 +79,12 @@ export class BackendService{
     public static SetUsersForCollection(collectionId: number, userIds: number[]): Promise<AxiosResponse>{
         return BackendService.axios.put(BackendService.baseUrl+"api/Collection/"+collectionId +"/users", userIds)
     }
+
+    public static DeleteCollection(collectionId: number){
+        return BackendService.axios.delete(BackendService.baseUrl+"api/Collection/"+collectionId);
+    }
+
+    public static RemoveTabFromCollection(collectionId: number, tabId: number){
+        return BackendService.axios.delete(BackendService.baseUrl+"api/CollectionTabRelation/collection/"+collectionId+"/tab/"+tabId);
+    }
 }

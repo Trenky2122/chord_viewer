@@ -24,8 +24,7 @@ code {
 
 .contextMenuItem {
   border-bottom: solid 1px #CCC;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding: 1ex 1em;
 }
 
 .selectedLi {
