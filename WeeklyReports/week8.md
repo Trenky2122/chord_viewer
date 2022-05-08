@@ -44,6 +44,48 @@ Najväčšie problémy som mal pri prvých deploymentoch, trvalo mi to veľmi dl
 
 ### Čo by som urobil inak
 
-Nezačal by som skúšať
+Nezačal by som skúšať pracovať s MS Identity Frameworkom. Použil by som MS SQL databázu pre jednoduchší deployment. 
 
+### Výstup z cloc
+
+Pôvodný commit
+```
+------------------------------------------------------------------------------------
+Language                          files          blank        comment           code
+------------------------------------------------------------------------------------
+JSON                                  8              0              0          38028
+Markdown                              1            693              0           1535
+JavaScript                           22            151            102           1029
+C#                                    9            170              4            746
+C# Designer                           1            104              1            314
+Razor                                 3              5              0             60
+MSBuild script                        1              6              4             49
+CSS                                   2              4              1             27
+Visual Studio Solution                1              1              1             23
+HTML                                  1              3             20             18
+------------------------------------------------------------------------------------
+SUM:                                 49           1137            133          41829
+------------------------------------------------------------------------------------
+```
+Posledný commit
+```
+------------------------------------------------------------------------------------
+Language                          files          blank        comment           code
+------------------------------------------------------------------------------------
+JSON                                 12              0              0          39061
+TypeScript                           22            144              5           2057
+Markdown                             10            811              0           1694
+C#                                   19            203             18           1231
+C# Designer                           3            251              3            682
+JavaScript                            9             46             66            286
+MSBuild script                        1              6              4             60
+CSS                                   2             11              1             50
+YAML                                  1             11              2             44
+XML                                   4              0              0             32
+Visual Studio Solution                1              1              1             23
+HTML                                  1              3             20             18
+------------------------------------------------------------------------------------
+SUM:                                 85           1487            120          45238
+------------------------------------------------------------------------------------
+```
 
